@@ -1,0 +1,274 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.plan-wrap{padding:1.5rem 0 2rem}
+.header-row{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}
+.header-title{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.header-sub{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.progress-bar-wrap{background:var(--color-background-secondary);border-radius:999px;height:8px;margin-bottom:0.5rem;overflow:hidden}
+.progress-bar-fill{height:8px;border-radius:999px;background:#534AB7;transition:width 0.4s}
+.progress-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:1.5rem}
+.phase-tabs{display:flex;gap:6px;margin-bottom:1.25rem;flex-wrap:wrap}
+.phase-tab{padding:5px 14px;border-radius:999px;border:0.5px solid var(--color-border-secondary);font-size:13px;cursor:pointer;background:var(--color-background-primary);color:var(--color-text-secondary);transition:all 0.2s}
+.phase-tab.active{background:#534AB7;color:#fff;border-color:#534AB7}
+.phase-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;margin-bottom:1rem}
+.phase-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:1rem}
+.phase-badge{width:40px;height:40px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.phase-meta{flex:1}
+.phase-title{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.phase-period{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.phase-desc{font-size:13px;color:var(--color-text-secondary);margin-top:4px;line-height:1.5}
+.topic-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.topic-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);cursor:pointer;transition:opacity 0.15s}
+.topic-item:hover{opacity:0.8}
+.topic-item.done .topic-check{background:#534AB7;border-color:#534AB7;color:#fff}
+.topic-check{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;font-size:11px;transition:all 0.2s}
+.topic-text{font-size:13px;color:var(--color-text-primary);line-height:1.4}
+.topic-sub{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.resource-section{margin-top:1rem;padding-top:1rem;border-top:0.5px solid var(--color-border-tertiary)}
+.resource-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em}
+.resource-chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12px;padding:3px 10px;border-radius:999px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary);background:var(--color-background-primary)}
+.chip.free{border-color:#1D9E75;color:#0F6E56;background:#E1F5EE}
+.chip.code{border-color:#185FA5;color:#185FA5;background:#E6F1FB}
+.milestone-row{display:flex;align-items:center;gap:10px;padding:10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-top:1rem}
+.milestone-icon{font-size:20px}
+.milestone-text{font-size:13px;color:var(--color-text-primary);font-weight:500}
+.milestone-sub{font-size:12px;color:var(--color-text-secondary)}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem}
+.stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:12px;text-align:center}
+.stat-num{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat-label{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.ask-btn{margin-top:1.25rem;width:100%;padding:10px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px}
+.ask-btn:hover{background:var(--color-background-secondary)}
+.no-show{display:none}
+</style>
+
+<div class="plan-wrap">
+  <div class="header-row">
+    <div>
+      <div class="header-title">Henry의 LLM 마스터 플랜</div>
+      <div class="header-sub">개념 이해 → 직접 구현까지 · 5단계 · 약 16주</div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="s-done">0</div><div class="stat-label">완료 항목</div></div>
+    <div class="stat-card"><div class="stat-num">40</div><div class="stat-label">전체 항목</div></div>
+    <div class="stat-card"><div class="stat-num">16</div><div class="stat-label">주 플랜</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-pct">0%</div><div class="stat-label">진행률</div></div>
+  </div>
+
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="prog-bar" style="width:0%"></div></div>
+  <div class="progress-label" id="prog-label">아직 시작 전이에요. 첫 항목을 클릭해 시작해보세요!</div>
+
+  <div class="phase-tabs">
+    <button class="phase-tab active" onclick="showPhase(0)">1단계</button>
+    <button class="phase-tab" onclick="showPhase(1)">2단계</button>
+    <button class="phase-tab" onclick="showPhase(2)">3단계</button>
+    <button class="phase-tab" onclick="showPhase(3)">4단계</button>
+    <button class="phase-tab" onclick="showPhase(4)">5단계</button>
+  </div>
+
+  <div id="phase-container"></div>
+</div>
+
+<script>
+const phases = [
+  {
+    title: "LLM 개념 지도 그리기",
+    period: "1~2주 · 주 5~8시간",
+    badge: "🗺️",
+    color: "#EEEDFE",
+    desc: "수식 없이 LLM의 전체 그림을 이해합니다. 삼성 R&D 경험의 시스템 사고가 큰 도움이 됩니다.",
+    topics: [
+      {t:"언어 모델이란 무엇인가", s:"통계 LM → 신경망 LM 역사 흐름", id:"t01"},
+      {t:"토큰화(Tokenization)", s:"BPE, WordPiece 원리 + 실습", id:"t02"},
+      {t:"임베딩(Embedding)", s:"단어→벡터, 의미 공간 직관", id:"t03"},
+      {t:"Attention 메커니즘", s:"Q·K·V 행렬, 왜 작동하는가", id:"t04"},
+      {t:"Transformer 아키텍처", s:"Encoder·Decoder·셀프어텐션", id:"t05"},
+      {t:"사전훈련 vs 파인튜닝", s:"GPT·BERT 전략 차이", id:"t06"},
+      {t:"RLHF 개념", s:"사람 피드백으로 정렬하는 방법", id:"t07"},
+      {t:"스케일링 법칙(Scaling Law)", s:"파라미터·데이터·컴퓨트 관계", id:"t08"}
+    ],
+    resources: [
+      {n:"3Blue1Brown GPT 영상", type:"free"},
+      {n:"Andrej Karpathy 'What is GPT'", type:"free"},
+      {n:"Illustrated Transformer (Alammar)", type:"free"},
+      {n:"Elements of AI (한국어)", type:"free"}
+    ],
+    milestone: {icon:"🗺️", text:"LLM 개념 지도 직접 그리기", sub:"A4 1장에 전체 흐름 손으로 스케치 → 교육 자료로 재활용 가능"}
+  },
+  {
+    title: "핵심 수학·코드 기초",
+    period: "3~4주 · 주 6~10시간",
+    badge: "⚙️",
+    color: "#E6F1FB",
+    desc: "전기전자 배경 덕분에 행렬·확률은 이미 기초가 있습니다. LLM에 필요한 부분만 빠르게 복습합니다.",
+    topics: [
+      {t:"행렬곱 & 벡터 연산", s:"NumPy로 직접 계산", id:"t09"},
+      {t:"소프트맥스(Softmax)", s:"확률 분포로 변환하는 원리", id:"t10"},
+      {t:"교차 엔트로피 손실", s:"언어 모델의 학습 목표", id:"t11"},
+      {t:"역전파(Backprop) 직관", s:"미분 체인룰, 손수 계산 1회", id:"t12"},
+      {t:"PyTorch 기초", s:"Tensor·autograd·nn.Module", id:"t13"},
+      {t:"Colab 환경 세팅", s:"GPU 런타임, 패키지 관리", id:"t14"},
+      {t:"Hugging Face 기초", s:"pipeline, tokenizer, model.forward", id:"t15"},
+      {t:"미니배치 학습 루프", s:"DataLoader·Optimizer·Scheduler", id:"t16"}
+    ],
+    resources: [
+      {n:"fast.ai Practical Deep Learning", type:"free"},
+      {n:"PyTorch 공식 튜토리얼", type:"free"},
+      {n:"Google Colab (무료 T4 GPU)", type:"free"},
+      {n:"Hugging Face 강좌", type:"free"}
+    ],
+    milestone: {icon:"⚙️", text:"Softmax 직접 구현 & 검증", sub:"NumPy로 Softmax + 교차엔트로피 구현, PyTorch 결과와 비교"}
+  },
+  {
+    title: "Bigram LLM 직접 구현",
+    period: "5~7주 · 주 8~12시간",
+    badge: "🔨",
+    color: "#E1F5EE",
+    desc: "Karpathy의 makemore·nanoGPT 코드를 따라가며, 진짜 LLM의 내부를 손으로 만들어봅니다.",
+    topics: [
+      {t:"Bigram 문자 LM 구현", s:"가장 단순한 언어 모델부터", id:"t17"},
+      {t:"임베딩 레이어 직접 작성", s:"nn.Embedding 내부 이해", id:"t18"},
+      {t:"셀프 어텐션 헤드 1개 구현", s:"Q·K·V 행렬 직접 코딩", id:"t19"},
+      {t:"멀티헤드 어텐션 구현", s:"헤드 병렬화, Concat, 선형 투영", id:"t20"},
+      {t:"Feedforward 블록 추가", s:"MLP, GELU 활성화", id:"t21"},
+      {t:"GPT-2 style 쌓기", s:"N개 레이어, LayerNorm, Residual", id:"t22"},
+      {t:"텍스트 생성(Sampling)", s:"온도(temperature), top-k, top-p", id:"t23"},
+      {t:"학습 & 손실 곡선 분석", s:"과적합·언더피팅 진단", id:"t24"}
+    ],
+    resources: [
+      {n:"karpathy/makemore (GitHub)", type:"code"},
+      {n:"karpathy/nanoGPT (GitHub)", type:"code"},
+      {n:"YouTube 'Let's build GPT' (Karpathy)", type:"free"},
+      {n:"Google Colab A100 (Pro 月$10)", type:"code"}
+    ],
+    milestone: {icon:"🔨", text:"한국어 소설 1권으로 GPT 학습", sub:"Project Gutenberg 한국어 텍스트 → nanoGPT 학습 → 문장 생성 데모"}
+  },
+  {
+    title: "사전훈련 모델 파인튜닝",
+    period: "8~11주 · 주 8~12시간",
+    badge: "🎯",
+    color: "#FAEEDA",
+    desc: "직접 만든 모델 경험을 바탕으로 GPT-2·sLLM을 파인튜닝, 교육용 챗봇 실제 제작까지 이어갑니다.",
+    topics: [
+      {t:"Hugging Face Trainer API", s:"TrainingArguments, 커스텀 데이터셋", id:"t25"},
+      {t:"LoRA / QLoRA 파인튜닝", s:"파라미터 효율 학습, 4bit 양자화", id:"t26"},
+      {t:"한국어 sLLM 파인튜닝", s:"EXAONE-3.5 / SOLAR / LLaMa 한국어", id:"t27"},
+      {t:"Instruction Tuning 데이터 설계", s:"Alpaca 포맷, 교육용 QA 데이터", id:"t28"},
+      {t:"평가지표: Perplexity·BLEU·ROUGE", s:"자동 평가 + 인간 평가 설계", id:"t29"},
+      {t:"Ollama로 로컬 배포", s:"라즈베리파이5 또는 노트북", id:"t30"},
+      {t:"Gradio로 데모 UI 제작", s:"Hugging Face Spaces 무료 배포", id:"t31"},
+      {t:"RAG 기초 연결", s:"FAISS 벡터DB + 교재 문서 검색", id:"t32"}
+    ],
+    resources: [
+      {n:"PEFT / TRL (Hugging Face)", type:"code"},
+      {n:"Unsloth (QLoRA 2배 속도)", type:"free"},
+      {n:"AI-Hub 한국어 데이터셋", type:"free"},
+      {n:"Ollama + Qwen2.5-7B", type:"free"}
+    ],
+    milestone: {icon:"🎯", text:"코딩앤플레이 교육용 챗봇 v1", sub:"Python·AI 학생 Q&A 파인튜닝 모델 → Gradio 데모 → 학부모 공개"}
+  },
+  {
+    title: "나만의 LLM 프로젝트 완성",
+    period: "12~16주 · 주 10시간",
+    badge: "🚀",
+    color: "#FAECE7",
+    desc: "Henry님의 교육 사업과 연결된 실제 LLM 프로젝트를 완성하고 공개합니다. 책·교재·강의로 확장 가능.",
+    topics: [
+      {t:"프로젝트 기획서 작성", s:"문제정의·데이터·평가기준", id:"t33"},
+      {t:"데이터 파이프라인 구축", s:"수집·정제·포맷팅 자동화", id:"t34"},
+      {t:"모델 학습 실험 관리", s:"W&B 또는 MLflow로 추적", id:"t35"},
+      {t:"시스템 프롬프트 엔지니어링", s:"교육용 페르소나·안전장치 설계", id:"t36"},
+      {t:"API 서버 구축(FastAPI)", s:"LLM 추론 엔드포인트", id:"t37"},
+      {t:"학생·교사 피드백 수집", s:"평가 루프 → 지속 개선", id:"t38"},
+      {t:"기술 블로그 / GitHub 공개", s:"재현 가능한 코드 + README", id:"t39"},
+      {t:"교육 교재 챕터로 집필", s:"P-C-S-M-A 프레임워크 적용", id:"t40"}
+    ],
+    resources: [
+      {n:"Weights & Biases (무료티어)", type:"free"},
+      {n:"FastAPI + Uvicorn", type:"code"},
+      {n:"GitHub Pages + Actions CI", type:"free"},
+      {n:"Anthropic Claude API", type:"code"}
+    ],
+    milestone: {icon:"🚀", text:"LLM 교육 교재 챕터 1편 출판", sub:"직접 만든 모델 + 학습 과정 → CTR 시리즈 4번째 책 씨앗"}
+  }
+];
+
+const checked = {};
+let currentPhase = 0;
+
+function showPhase(idx) {
+  currentPhase = idx;
+  document.querySelectorAll('.phase-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+  renderPhase();
+}
+
+function renderPhase() {
+  const p = phases[currentPhase];
+  const html = `
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-badge" style="background:${p.color}">${p.badge}</div>
+        <div class="phase-meta">
+          <div class="phase-title">${currentPhase+1}단계: ${p.title}</div>
+          <div class="phase-period">${p.period}</div>
+          <div class="phase-desc">${p.desc}</div>
+        </div>
+      </div>
+      <div class="topic-grid">
+        ${p.topics.map(tp => `
+          <div class="topic-item${checked[tp.id]?' done':''}" onclick="toggle('${tp.id}')" id="item-${tp.id}">
+            <div class="topic-check">${checked[tp.id]?'✓':''}</div>
+            <div>
+              <div class="topic-text">${tp.t}</div>
+              <div class="topic-sub">${tp.s}</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+      <div class="resource-section">
+        <div class="resource-label">학습 리소스</div>
+        <div class="resource-chips">
+          ${p.resources.map(r=>`<span class="chip ${r.type}">${r.n}</span>`).join('')}
+        </div>
+      </div>
+      <div class="milestone-row">
+        <span class="milestone-icon">${p.milestone.icon}</span>
+        <div>
+          <div class="milestone-text">마일스톤: ${p.milestone.text}</div>
+          <div class="milestone-sub">${p.milestone.sub}</div>
+        </div>
+      </div>
+      <button class="ask-btn" onclick="sendPrompt('${currentPhase+1}단계 ${p.title}에 대해 더 자세하게 설명해줘. 특히 Henry의 교육 현장에 어떻게 활용할 수 있는지 알려줘.')">
+        <i class="ti ti-arrow-right" aria-hidden="true"></i> 이 단계 더 자세히 알아보기 ↗
+      </button>
+    </div>
+  `;
+  document.getElementById('phase-container').innerHTML = html;
+}
+
+function toggle(id) {
+  checked[id] = !checked[id];
+  const item = document.getElementById('item-'+id);
+  item.classList.toggle('done', checked[id]);
+  item.querySelector('.topic-check').textContent = checked[id]?'✓':'';
+  updateStats();
+}
+
+function updateStats() {
+  const done = Object.values(checked).filter(Boolean).length;
+  const pct = Math.round((done/40)*100);
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-pct').textContent = pct+'%';
+  document.getElementById('prog-bar').style.width = pct+'%';
+  const labels = ['아직 시작 전이에요. 첫 항목을 클릭해 시작해보세요!','잘 시작했어요! 계속 이어가세요 💪','좋은 속도예요! 3단계 구현이 핵심입니다 🔨','절반을 넘었어요! nanoGPT는 경험이 됩니다 🎯','거의 다 왔어요! 마지막 프로젝트가 가장 값집니다 🚀','LLM을 직접 만든 교육자가 되었습니다! 🎉'];
+  const li = pct===0?0:pct<25?1:pct<50?2:pct<75?3:pct<100?4:5;
+  document.getElementById('prog-label').textContent = labels[li];
+}
+
+renderPhase();
+</script>

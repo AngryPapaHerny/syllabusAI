@@ -1,0 +1,55 @@
+# 의존성
+node_modules/
+.pnp
+.pnp.js
+
+# Next.js 빌드 산출물
+.next/
+out/
+
+# 환경 변수 (절대 커밋 금지)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+# 예시 파일은 커밋 허용
+!.env.local.example
+!.env.production.example
+
+# Vercel
+.vercel
+
+# 테스트 커버리지
+coverage/
+.nyc_output
+
+# TypeScript 생성 파일
+types/database.generated.ts
+tsconfig.tsbuildinfo
+
+# Supabase 로컬 개발 (Docker 볼륨 등)
+supabase/.branches
+supabase/.temp
+
+# Claude Code 로컬 설정 (개인 머신 권한·명령 allowlist — 커밋 제외)
+.claude/settings.json
+.claude/settings.local.json
+
+# 에디터
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 로그
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# 기타
+.turbo/

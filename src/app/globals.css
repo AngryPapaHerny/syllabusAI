@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* syllabusAI Dark Navy Theme */
+    --background: 222 47% 11%;        /* #0F172A */
+    --foreground: 210 40% 96%;         /* #F1F5F9 */
+    --card: 217 33% 17%;               /* #1E293B */
+    --card-foreground: 210 40% 96%;
+    --popover: 217 33% 17%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 239 84% 67%;            /* #6366F1 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 215 25% 27%;          /* #334155 */
+    --secondary-foreground: 210 40% 96%;
+    --muted: 215 25% 27%;
+    --muted-foreground: 215 16% 57%;   /* #64748B */
+    --accent: 239 84% 67%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 350 89% 60%;        /* #F43F5E */
+    --destructive-foreground: 0 0% 100%;
+    --border: 217 19% 22%;
+    --input: 215 20% 25%;
+    --ring: 239 84% 67%;
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-[#0F172A] text-slate-100 antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    /* 은은한 상단 라디얼 글로우 — 깊이감 부여 */
+    background-image:
+      radial-gradient(60rem 40rem at 50% -10rem, rgba(99, 102, 241, 0.08), transparent 70%);
+    background-attachment: fixed;
+  }
+  /* 전역 focus-visible 링 — 접근성 + 완성도 */
+  :focus-visible {
+    @apply outline-none ring-2 ring-indigo-500/60 ring-offset-2 ring-offset-[#0F172A];
+  }
+  /* 텍스트 선택 색상 */
+  ::selection {
+    background: rgba(99, 102, 241, 0.3);
+    color: #fff;
+  }
+  h1, h2, h3 {
+    @apply tracking-tight;
+  }
+}
+
+@layer components {
+  /* 표면 (카드) */
+  .surface {
+    @apply rounded-xl border border-white/[0.08] bg-[#1E293B];
+  }
+  /* 상호작용 가능한 카드 — hover 시 살짝 떠오르고 테두리 강조 */
+  .surface-interactive {
+    @apply rounded-xl border border-white/[0.08] bg-[#1E293B] transition-all duration-200
+           hover:border-indigo-500/40 hover:bg-[#212f49] hover:shadow-lg hover:shadow-black/30;
+  }
+
+  /* 버튼 시스템 */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5
+           text-sm font-semibold text-white shadow-lg shadow-indigo-600/25 transition-all duration-150
+           hover:bg-indigo-500 active:scale-[0.98]
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-white/10 px-4 py-2.5
+           text-sm font-medium text-slate-300 transition-all duration-150
+           hover:border-indigo-500/50 hover:bg-white/[0.04] hover:text-slate-100 active:scale-[0.98]
+           disabled:pointer-events-none disabled:opacity-40;
+  }
+  .btn-success {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2.5
+           text-sm font-semibold text-white shadow-lg shadow-emerald-600/25 transition-all duration-150
+           hover:bg-emerald-500 active:scale-[0.98]
+           disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  /* 인풋 */
+  .input-field {
+    @apply w-full rounded-lg border border-white/[0.12] bg-[#0F172A]/50 px-3.5 py-2.5 text-sm text-slate-100
+           placeholder:text-slate-500 transition-colors duration-150
+           focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:ring-offset-0;
+  }
+}
+
+/* Custom scrollbar for dark theme */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.10); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+/* Range slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 5px;
+  border-radius: 3px;
+  background: #334155;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #6366F1;
+  cursor: pointer;
+  border: 3px solid #0F172A;
+  box-shadow: 0 0 0 1px #6366F1, 0 2px 6px rgba(99,102,241,0.4);
+  transition: transform 0.12s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+/* 진입 애니메이션 */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fade-in-up 0.35s ease-out both;
+}

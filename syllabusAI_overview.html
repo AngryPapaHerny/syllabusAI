@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>syllabusAI — AI 학습 자동 생성 플랫폼 · 사업 설명서</title>
+<style>
+:root{
+  --p:#534AB7; --pl:#EEEDFE; --pd:#3C3489;
+  --green:#0F6E56; --greenl:#E1F5EE;
+  --amber:#854F0B; --amberl:#FAEEDA;
+  --blue:#185FA5; --bluel:#E6F1FB;
+  --rust:#993C1D; --rustl:#FAECE7;
+  --ink:#1d1c1a; --ink2:#44443f; --ink3:#73726c;
+  --bg:#faf9f6; --card:#ffffff; --line:#e7e5df;
+  --font:'Pretendard',-apple-system,BlinkMacSystemFont,'Segoe UI','Apple SD Gothic Neo',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+
+/* ===== top nav ===== */
+.topbar{position:sticky;top:0;z-index:50;background:rgba(250,249,246,.85);backdrop-filter:blur(10px);border-bottom:.5px solid var(--line)}
+.topbar-inner{max-width:1080px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.brand{font-weight:700;font-size:17px;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.brand .dot{width:22px;height:22px;border-radius:7px;background:linear-gradient(135deg,var(--p),#7d74e0);display:inline-block}
+.navlinks{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.navlinks a{font-size:13px;color:var(--ink3);text-decoration:none;padding:6px 11px;border-radius:999px;transition:.18s;white-space:nowrap}
+.navlinks a:hover{color:var(--p);background:var(--pl)}
+
+/* ===== hero ===== */
+.hero{padding:72px 0 56px;text-align:center}
+.eyebrow{display:inline-block;font-size:12.5px;font-weight:600;color:var(--p);background:var(--pl);padding:6px 14px;border-radius:999px;letter-spacing:.01em;margin-bottom:22px}
+.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.12;letter-spacing:-.03em;font-weight:800;margin-bottom:20px}
+.hero h1 .hl{background:linear-gradient(120deg,var(--p),#8b7ff0);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero p.lead{font-size:clamp(16px,2.3vw,20px);color:var(--ink2);max-width:720px;margin:0 auto 32px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn{font-family:inherit;font-size:14px;font-weight:600;padding:12px 22px;border-radius:11px;border:none;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:7px;transition:.18s}
+.btn-pri{background:var(--p);color:#fff}
+.btn-pri:hover{background:var(--pd);transform:translateY(-1px)}
+.btn-sec{background:var(--card);color:var(--ink);border:.5px solid var(--line)}
+.btn-sec:hover{border-color:var(--p);color:var(--p)}
+
+.statbar{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:56px}
+.stat{background:var(--card);border:.5px solid var(--line);border-radius:16px;padding:22px 16px;text-align:center}
+.stat .n{font-size:30px;font-weight:800;letter-spacing:-.03em;color:var(--p)}
+.stat .l{font-size:12.5px;color:var(--ink3);margin-top:5px;line-height:1.45}
+
+/* ===== section shell ===== */
+section.block{padding:60px 0;border-top:.5px solid var(--line)}
+.sec-tag{font-size:12.5px;font-weight:700;color:var(--p);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.sec-h{font-size:clamp(24px,3.4vw,34px);font-weight:800;letter-spacing:-.025em;line-height:1.2;margin-bottom:14px}
+.sec-sub{font-size:16px;color:var(--ink2);max-width:740px;margin-bottom:34px}
+
+/* problem/solution */
+.ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.ps-card{border-radius:18px;padding:26px;border:.5px solid var(--line)}
+.ps-card.prob{background:#fff}
+.ps-card.sol{background:var(--pl);border-color:#d8d4f5}
+.ps-card h3{font-size:17px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.ps-card ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.ps-card li{font-size:14.5px;color:var(--ink2);padding-left:24px;position:relative}
+.ps-card.prob li::before{content:"✕";position:absolute;left:0;color:var(--rust);font-weight:700;font-size:12px;top:1px}
+.ps-card.sol li::before{content:"✓";position:absolute;left:0;color:var(--green);font-weight:800;font-size:13px;top:1px}
+
+/* architecture layers */
+.arch{display:flex;flex-direction:column;gap:0;align-items:center}
+.layer{width:100%;border-radius:18px;padding:24px;border:.5px solid;position:relative}
+.layer .badge{position:absolute;top:-11px;left:24px;font-size:11.5px;font-weight:700;padding:4px 12px;border-radius:999px;color:#fff}
+.layer h4{font-size:16px;font-weight:700;margin-bottom:4px}
+.layer p{font-size:13.5px;color:var(--ink2);margin-bottom:14px}
+.layer .row{display:flex;gap:10px;flex-wrap:wrap}
+.chip{font-size:12.5px;font-weight:500;padding:8px 13px;border-radius:10px;background:#fff;border:.5px solid var(--line)}
+.lA{background:var(--rustl);border-color:#eccbbf}.lA .badge{background:var(--rust)}
+.lB{background:var(--greenl);border-color:#bfe6d8}.lB .badge{background:var(--green)}
+.lC{background:var(--pl);border-color:#d8d4f5}.lC .badge{background:var(--p)}
+.arrow-v{width:2px;height:30px;background:linear-gradient(var(--ink3),transparent);position:relative;margin:6px 0}
+.arrow-v::after{content:"";position:absolute;bottom:0;left:-4px;border:5px solid transparent;border-top-color:var(--ink3)}
+.arrow-lbl{font-size:11.5px;color:var(--ink3);margin:2px 0}
+
+/* principle tabs */
+.prin-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.ptab{font-family:inherit;font-size:13.5px;font-weight:600;padding:9px 16px;border-radius:999px;border:.5px solid var(--line);background:#fff;color:var(--ink2);cursor:pointer;transition:.18s}
+.ptab.on{background:var(--p);color:#fff;border-color:var(--p)}
+.ptab:hover:not(.on){border-color:var(--p);color:var(--p)}
+.prin-panel{background:#fff;border:.5px solid var(--line);border-radius:18px;padding:30px;min-height:200px}
+.prin-panel .num{font-size:13px;font-weight:700;color:var(--p);margin-bottom:8px}
+.prin-panel h3{font-size:21px;font-weight:800;letter-spacing:-.02em;margin-bottom:14px}
+.prin-cmp{display:grid;grid-template-columns:1fr auto 1fr;gap:16px;align-items:center;margin-top:18px}
+.cmp-box{border-radius:14px;padding:16px 18px}
+.cmp-old{background:#f6f5f2;border:.5px solid var(--line)}
+.cmp-new{background:var(--pl);border:.5px solid #d8d4f5}
+.cmp-box .t{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:7px}
+.cmp-old .t{color:var(--ink3)}.cmp-new .t{color:var(--p)}
+.cmp-box .d{font-size:14px;color:var(--ink2);line-height:1.5}
+.cmp-arrow{font-size:24px;color:var(--p);font-weight:300}
+
+/* pipeline */
+.pipe{display:flex;flex-direction:column;gap:12px}
+.pstep{display:flex;gap:16px;align-items:flex-start;background:#fff;border:.5px solid var(--line);border-radius:14px;padding:18px 20px;transition:.18s}
+.pstep:hover{border-color:var(--p);box-shadow:0 6px 22px -12px rgba(83,74,183,.4)}
+.pstep .ic{width:42px;height:42px;border-radius:12px;background:var(--amberl);color:var(--amber);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;font-weight:700}
+.pstep:nth-child(2) .ic{background:var(--bluel);color:var(--blue)}
+.pstep:nth-child(3) .ic{background:var(--pl);color:var(--p)}
+.pstep:nth-child(4) .ic{background:var(--greenl);color:var(--green)}
+.pstep h4{font-size:15.5px;font-weight:700;margin-bottom:3px}
+.pstep p{font-size:13.5px;color:var(--ink2)}
+.gw{margin-top:18px;background:linear-gradient(120deg,#1d1c2e,#2c2a44);color:#fff;border-radius:18px;padding:26px}
+.gw h4{font-size:16px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.gw p{font-size:13.5px;color:#c9c6e0;margin-bottom:16px;max-width:640px}
+.gw-models{display:flex;gap:10px;flex-wrap:wrap}
+.gw-chip{font-size:13px;font-weight:600;padding:9px 15px;border-radius:10px;background:rgba(255,255,255,.1);border:.5px solid rgba(255,255,255,.2)}
+
+/* moat / reuse */
+.moat-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:center}
+.moat-vis{background:#fff;border:.5px solid var(--line);border-radius:18px;padding:26px}
+.lib-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.lib-bar{height:30px;border-radius:8px;background:linear-gradient(90deg,var(--p),#8b7ff0);display:flex;align-items:center;padding:0 12px;color:#fff;font-size:12px;font-weight:600;white-space:nowrap;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.lib-lbl{font-size:12.5px;color:var(--ink3);width:64px;flex-shrink:0;text-align:right}
+.moat-pts{display:flex;flex-direction:column;gap:16px}
+.moat-pt h4{font-size:15.5px;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.moat-pt p{font-size:13.5px;color:var(--ink2)}
+
+/* learning loop */
+.loop{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.loop-step{background:#fff;border:.5px solid var(--line);border-radius:14px;padding:16px 14px;text-align:center;position:relative}
+.loop-step .n{width:26px;height:26px;border-radius:50%;background:var(--p);color:#fff;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 10px}
+.loop-step h4{font-size:13.5px;font-weight:700;margin-bottom:4px}
+.loop-step p{font-size:11.5px;color:var(--ink3);line-height:1.45}
+.loop-back{margin-top:14px;text-align:center;font-size:13px;color:var(--green);font-weight:600;background:var(--greenl);padding:10px;border-radius:11px}
+
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.phase{border-radius:16px;padding:22px 18px;border:.5px solid var(--line);background:#fff;position:relative;overflow:hidden}
+.phase::before{content:"";position:absolute;top:0;left:0;right:0;height:4px}
+.phase.p0::before{background:var(--rust)}.phase.p1::before{background:var(--amber)}
+.phase.p2::before{background:var(--blue)}.phase.p3::before{background:var(--green)}
+.phase .ph{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.04em;margin-bottom:8px}
+.phase h4{font-size:16px;font-weight:800;margin-bottom:10px;letter-spacing:-.02em}
+.phase p{font-size:13px;color:var(--ink2)}
+.phase .tag{display:inline-block;font-size:11px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--pl);color:var(--p);margin-top:12px}
+
+/* stack & risk */
+.sr-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.panel{background:#fff;border:.5px solid var(--line);border-radius:18px;padding:26px}
+.panel h3{font-size:17px;font-weight:700;margin-bottom:16px}
+.stk{display:flex;flex-direction:column;gap:12px}
+.stk-row{display:flex;gap:12px;align-items:baseline}
+.stk-row .k{font-size:12.5px;font-weight:700;color:var(--p);width:120px;flex-shrink:0}
+.stk-row .v{font-size:13.5px;color:var(--ink2)}
+.risk{display:flex;flex-direction:column;gap:13px}
+.risk-row .r{font-size:13.5px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.risk-row .m{font-size:12.5px;color:var(--ink3)}
+
+footer{padding:50px 0 70px;text-align:center;border-top:.5px solid var(--line);color:var(--ink3);font-size:13px}
+footer .big{font-size:22px;font-weight:800;color:var(--ink);letter-spacing:-.02em;margin-bottom:10px}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:860px){
+  .statbar{grid-template-columns:repeat(2,1fr)}
+  .ps-grid,.moat-grid,.sr-grid{grid-template-columns:1fr}
+  .loop,.road{grid-template-columns:1fr 1fr}
+  .prin-cmp{grid-template-columns:1fr;text-align:center}
+  .cmp-arrow{transform:rotate(90deg)}
+  .navlinks{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand"><span class="dot"></span>syllabusAI</div>
+    <nav class="navlinks">
+      <a href="#how">작동 방식</a>
+      <a href="#why">차별점</a>
+      <a href="#engine">생성 엔진</a>
+      <a href="#moat">재사용 해자</a>
+      <a href="#loop">학습 경험</a>
+      <a href="#road">로드맵</a>
+      <a href="#stack">기술·리스크</a>
+    </nav>
+  </div>
+</div>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <span class="eyebrow">AI 학습 자동 생성 플랫폼 · 사업 설명서</span>
+    <h1>배우고 싶은 걸 입력하면,<br><span class="hl">나만의 커리큘럼이 자동으로</span> 만들어집니다</h1>
+    <p class="lead">주제·수준·분량만 입력하면 AI가 개인 맞춤 학습 경로와 콘텐츠를 생성하고, 평가로 약점을 찾아 재학습까지 이끕니다. 한 번 만든 콘텐츠는 다른 학습자에게 재사용·수준별 변형되어 <strong>쓸수록 똑똑해지고 저렴해집니다.</strong></p>
+    <div class="cta-row">
+      <a href="#how" class="btn btn-pri">작동 방식 보기 →</a>
+      <a href="#road" class="btn btn-sec">로드맵</a>
+    </div>
+    <div class="statbar">
+      <div class="stat reveal"><div class="n">1:1</div><div class="l">학습자별 완전 맞춤 커리큘럼</div></div>
+      <div class="stat reveal"><div class="n">↓90%</div><div class="l">재사용으로 향하는 한계 생성비용</div></div>
+      <div class="stat reveal"><div class="n">3</div><div class="l">사전·중간·최종 평가 기반 재학습</div></div>
+      <div class="stat reveal"><div class="n">∞</div><div class="l">교체 가능한 LLM (Claude·GPT·Gemini)</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- PROBLEM / SOLUTION -->
+<section class="block" id="problem">
+  <div class="wrap">
+    <div class="sec-tag">문제와 해결</div>
+    <h2 class="sec-h">학습은 개인마다 다른데,<br>콘텐츠는 모두에게 똑같습니다</h2>
+    <p class="sec-sub">기성 강의는 내 수준·목표·속도를 모릅니다. AI에게 매번 물어보는 건 일관성도, 평가도, 진도 관리도 없습니다.</p>
+    <div class="ps-grid">
+      <div class="ps-card prob reveal">
+        <h3>😓 지금의 학습</h3>
+        <ul>
+          <li>내 수준과 안 맞는 천편일률 강의</li>
+          <li>어디서 막혔는지 짚어주는 평가 없음</li>
+          <li>모르는 부분만 다시 배우기 어려움</li>
+          <li>AI 답변은 매번 품질·정확도가 들쭉날쭉</li>
+          <li>진도·동기 관리는 온전히 내 몫</li>
+        </ul>
+      </div>
+      <div class="ps-card sol reveal">
+        <h3>✨ syllabusAI</h3>
+        <ul>
+          <li>주제·수준·분량 입력 → 맞춤 경로 자동 생성</li>
+          <li>사전·중간·최종 평가로 약점 정밀 진단</li>
+          <li>틀린 개념은 <em>다른 방식</em>으로 재설명·재학습</li>
+          <li>출처 검증·코드 실행으로 환각 차단</li>
+          <li>일정·마일스톤·진도까지 자동 관리</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="block" id="how">
+  <div class="wrap">
+    <div class="sec-tag">작동 방식</div>
+    <h2 class="sec-h">3개의 계층으로 동작합니다</h2>
+    <p class="sec-sub">학습자가 쓰는 <strong>빠른 웹앱</strong>, 자산이 쌓이는 <strong>데이터 계층</strong>, 콘텐츠를 만드는 <strong>생성 엔진</strong>을 분리해 비용과 속도를 동시에 잡습니다.</p>
+    <div class="arch">
+      <div class="layer lA reveal">
+        <span class="badge">A · 학습 런타임</span>
+        <h4>학습자가 만나는 웹앱 <span style="font-weight:500;color:var(--ink3);font-size:13px">(Next.js)</span></h4>
+        <p>온보딩·진단부터 학습·평가·재학습까지. 가볍고 빠르게, 이미 만들어진 콘텐츠를 조립해 보여줍니다.</p>
+        <div class="row">
+          <span class="chip">🎯 목표 입력 · 적응형 진단</span>
+          <span class="chip">📘 P-C-S-M-A 학습 뷰</span>
+          <span class="chip">🤖 AI 튜터(실시간)</span>
+          <span class="chip">📊 진도·포트폴리오</span>
+        </div>
+      </div>
+      <div class="arrow-v"></div><div class="arrow-lbl">학습 이벤트 ↕ 조립된 커리큘럼</div><div class="arrow-v"></div>
+      <div class="layer lB reveal">
+        <span class="badge">B · 데이터 계층</span>
+        <h4>쌓일수록 강해지는 자산 <span style="font-weight:500;color:var(--ink3);font-size:13px">(Supabase · pgvector)</span></h4>
+        <p>개념 라이브러리·학습자 모델·평가 문항이 축적됩니다. 의미 검색으로 "비슷한 주제"를 찾아 재사용합니다.</p>
+        <div class="row">
+          <span class="chip">🧩 Concept Library</span>
+          <span class="chip">🕸 선수지식 그래프</span>
+          <span class="chip">🔎 임베딩 의미 검색</span>
+          <span class="chip">👤 학습자 숙련도 모델</span>
+        </div>
+      </div>
+      <div class="arrow-v"></div><div class="arrow-lbl">생성 요청 ↕ 생성 결과 적재</div><div class="arrow-v"></div>
+      <div class="layer lC reveal">
+        <span class="badge">C · 생성 엔진</span>
+        <h4>콘텐츠를 만드는 비동기 워커 <span style="font-weight:500;color:var(--ink3);font-size:13px">(agentic)</span></h4>
+        <p>없는 콘텐츠만 백그라운드에서 생성. 난이도 보정 → 출처 검증 → 작성 → 자체 검수의 4단계 파이프라인.</p>
+        <div class="row">
+          <span class="chip">⚖️ 난이도 보정</span>
+          <span class="chip">🔒 환각 방지 Grounding</span>
+          <span class="chip">✍️ P-C-S-M-A 작성</span>
+          <span class="chip">✅ 자체 검수·재생성</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY / PRINCIPLES -->
+<section class="block" id="why">
+  <div class="wrap">
+    <div class="sec-tag">핵심 차별점</div>
+    <h2 class="sec-h">"AI로 콘텐츠 생성"은 누구나 합니다.<br>우리는 6가지를 다르게 했습니다</h2>
+    <p class="sec-sub">탭을 눌러 각 설계 원칙을 확인하세요.</p>
+    <div class="prin-tabs" id="ptabs"></div>
+    <div class="prin-panel" id="ppanel"></div>
+  </div>
+</section>
+
+<!-- ENGINE -->
+<section class="block" id="engine">
+  <div class="wrap">
+    <div class="sec-tag">생성 엔진</div>
+    <h2 class="sec-h">틀린 걸 가르치지 않는 4단계 파이프라인</h2>
+    <p class="sec-sub">교육에서 가장 위험한 건 "AI가 자신 있게 틀리는 것". 모든 콘텐츠는 검증을 통과해야 학습자에게 도달합니다.</p>
+    <div class="pipe">
+      <div class="pstep reveal"><div class="ic">1</div><div><h4>난이도 보정 (Calibrator)</h4><p>주제를 원자 개념으로 분해 → 학습자 선수지식과 비교 → 분량 대비 인지 부하 적정성 추정.</p></div></div>
+      <div class="pstep reveal"><div class="ic">2</div><div><h4>환각 방지 (Grounding)</h4><p>공식 문서·교과서 등 신뢰 소스 검색, 코드 예제는 실제로 실행해 확인, 모든 사실에 출처를 부착.</p></div></div>
+      <div class="pstep reveal"><div class="ic">3</div><div><h4>P-C-S-M-A 작성 (Writer)</h4><p>동기(P)→개념·비유(C)→실습(S)→응용 미션(M)→평가(A) 순서로 하나의 완결된 학습 유닛 작성.</p></div></div>
+      <div class="pstep reveal"><div class="ic">4</div><div><h4>자체 검수 (Self-Check)</h4><p>정답이 테스트를 통과하는가, 퀴즈에 복수 정답은 없는가, 난이도가 목표에 맞는가 — 실패 시 되돌려 재생성.</p></div></div>
+    </div>
+    <div class="gw reveal">
+      <h4>🔌 LLM Gateway — 특정 AI에 종속되지 않습니다</h4>
+      <p>생성·튜터·채점의 모든 호출이 단일 추상 계층을 거칩니다. 작업별로 최적 모델을 정책으로 선택하고, 장애 시 자동 폴백하며, 새 모델이 나오면 코드 수정 없이 교체합니다.</p>
+      <div class="gw-models">
+        <span class="gw-chip">Anthropic Claude</span>
+        <span class="gw-chip">OpenAI GPT</span>
+        <span class="gw-chip">Google Gemini</span>
+        <span class="gw-chip">+ 차세대 모델</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MOAT -->
+<section class="block" id="moat">
+  <div class="wrap">
+    <div class="sec-tag">재사용 해자</div>
+    <h2 class="sec-h">쓸수록 싸지고, 쌓일수록 강해집니다</h2>
+    <p class="sec-sub">진짜 자산은 '커리큘럼'이 아니라 재사용 가능한 <strong>원자 개념(Concept) 라이브러리</strong>입니다. 새 학습자의 경로 대부분이 기존 유닛 조립으로 즉시 충당되고, 빈 칸만 새로 생성합니다.</p>
+    <div class="moat-grid">
+      <div class="moat-vis reveal">
+        <div style="font-size:12.5px;font-weight:700;color:var(--ink3);margin-bottom:16px">신규 커리큘럼의 구성 (시간이 지날수록)</div>
+        <div class="lib-row"><span class="lib-lbl">출시 초기</span><div class="lib-bar" data-w="18%">신규 생성 82%</div></div>
+        <div class="lib-row"><span class="lib-lbl">6개월</span><div class="lib-bar" data-w="55%">재사용 55%</div></div>
+        <div class="lib-row"><span class="lib-lbl">1년+</span><div class="lib-bar" data-w="80%">재사용 80%</div></div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:14px;line-height:1.5">재사용분은 생성 비용 0 · 지연 거의 0. 라이브러리가 커질수록 한계비용이 0에 수렴합니다.</div>
+      </div>
+      <div class="moat-pts">
+        <div class="moat-pt reveal"><h4>🧩 개념 단위 재사용</h4><p>"코딩테스트 준비"와 "파이썬 알고리즘 기초"는 이름은 달라도 다수 개념이 동일. 개념 단위로 쪼개 매칭하면 재사용률이 급등합니다.</p></div>
+        <div class="moat-pt reveal"><h4>🎚 수준별 변형 캐싱</h4><p>한 개념을 입문/중급, 비유 중심/코드 중심 등 변형으로 저장. 재학습 시 같은 설명을 반복하지 않고 다른 변형을 제공합니다.</p></div>
+        <div class="moat-pt reveal"><h4>📈 자가 개선 루프</h4><p>학습자들이 반복해서 막히는 유닛은 자동으로 재생성 대상으로 표시. 콘텐츠가 시간이 지나며 스스로 좋아집니다.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEARNING LOOP -->
+<section class="block" id="loop">
+  <div class="wrap">
+    <div class="sec-tag">학습 경험</div>
+    <h2 class="sec-h">진단 → 학습 → 평가 → 재학습의 닫힌 루프</h2>
+    <p class="sec-sub">이미 아는 건 건너뛰고, 모르는 것만, 막히면 다른 방식으로. 망각하기 전에 다시.</p>
+    <div class="loop">
+      <div class="loop-step reveal"><div class="n">1</div><h4>온보딩</h4><p>주제·목표·주당 가용시간 입력 → 일정 자동 생성</p></div>
+      <div class="loop-step reveal"><div class="n">2</div><h4>적응형 진단</h4><p>아는 개념은 스킵, 빈 곳만 학습 경로에</p></div>
+      <div class="loop-step reveal"><div class="n">3</div><h4>학습</h4><p>P-C-S-M-A 유닛 + 실시간 AI 튜터</p></div>
+      <div class="loop-step reveal"><div class="n">4</div><h4>평가</h4><p>오답 원인을 공백·오개념·실수로 진단</p></div>
+      <div class="loop-step reveal"><div class="n">5</div><h4>재학습</h4><p>다른 변형으로 재설명 + 간격 반복</p></div>
+    </div>
+    <div class="loop-back reveal">↻ 약점이 사라질 때까지 — 학습자 숙련도(mastery)가 모든 결정의 기준</div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section class="block" id="road">
+  <div class="wrap">
+    <div class="sec-tag">로드맵</div>
+    <h2 class="sec-h">코딩 학습으로 검증하고, 전 분야로 확장</h2>
+    <p class="sec-sub">코딩은 '코드 실행으로 정답을 객관 검증'할 수 있어 출발점으로 최적. 학습 루프를 증명한 뒤 어학·교양·자격증으로 넓힙니다.</p>
+    <div class="road">
+      <div class="phase p0 reveal"><div class="ph">PHASE 0</div><h4>MVP</h4><p>코딩 단일 도메인. per-user 생성으로 생성→학습→평가→재학습 루프를 실제로 증명.</p><span class="tag">학습 루프 검증</span></div>
+      <div class="phase p1 reveal"><div class="ph">PHASE 1</div><h4>재사용 엔진</h4><p>생성 결과를 개념·변형으로 추출·인덱싱. 의미 검색 기반 조립과 변형 캐싱.</p><span class="tag">한계비용 ↓</span></div>
+      <div class="phase p2 reveal"><div class="ph">PHASE 2</div><h4>적응·정밀화</h4><p>적응형 진단(IRT) + 지식 추적 + 간격 반복 + 원인별 재학습.</p><span class="tag">개인화 ↑</span></div>
+      <div class="phase p3 reveal"><div class="ph">PHASE 3</div><h4>확장·자가개선</h4><p>일반 도메인 추가, 콘텐츠 자동 개선 루프, 커뮤니티·포트폴리오.</p><span class="tag">시장 확장</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STACK & RISK -->
+<section class="block" id="stack">
+  <div class="wrap">
+    <div class="sec-tag">기술 · 리스크</div>
+    <h2 class="sec-h">검증된 스택 위에, 리스크는 설계로 통제</h2>
+    <div class="sr-grid">
+      <div class="panel reveal">
+        <h3>🛠 권장 기술 스택</h3>
+        <div class="stk">
+          <div class="stk-row"><span class="k">프론트·런타임</span><span class="v">Next.js + Vercel, 스트리밍 AI 튜터</span></div>
+          <div class="stk-row"><span class="k">데이터</span><span class="v">Supabase (Postgres + pgvector + Auth + Storage)</span></div>
+          <div class="stk-row"><span class="k">LLM Gateway</span><span class="v">통합 추상화(Vercel AI SDK / LiteLLM) + 모델 정책 + 폴백</span></div>
+          <div class="stk-row"><span class="k">생성 워커</span><span class="v">Edge Function/별도 서비스 + 작업 큐(gen_jobs)</span></div>
+          <div class="stk-row"><span class="k">코드 검증</span><span class="v">샌드박스 러너 (Grounding·실습 채점 공용)</span></div>
+        </div>
+      </div>
+      <div class="panel reveal">
+        <h3>⚠️ 주요 리스크 & 대응</h3>
+        <div class="risk">
+          <div class="risk-row"><div class="r">교육 콘텐츠 환각</div><div class="m">→ Grounding + 코드 실행 검증 + 출처 + 인적 검수</div></div>
+          <div class="risk-row"><div class="r">생성 비용·지연</div><div class="m">→ 개념 재사용 + 변형 캐싱 + 인기 주제 사전 생성</div></div>
+          <div class="risk-row"><div class="r">콜드 스타트(빈 라이브러리)</div><div class="m">→ 초기 per-user 생성, 점진적 자산화</div></div>
+          <div class="risk-row"><div class="r">LLM 종속·장애</div><div class="m">→ Gateway 추상화 + 자동 폴백 라우팅</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="big">syllabusAI</div>
+    <div>입력하면 만들어지고, 쓸수록 똑똑해지는 학습 플랫폼</div>
+    <div style="margin-top:8px;opacity:.7">사업 설명용 인터랙티브 개요 · 전체 설계도 기반</div>
+  </div>
+</footer>
+
+<script>
+// ===== principles tab data =====
+const principles = [
+  {num:"원칙 01", t:"개념 단위 재사용", old:["커리큘럼을 통째로 저장하고 비슷한 주제를 통째로 재사용 — 매칭이 어렵고 재사용률이 낮음"], neu:["선수지식 그래프로 연결된 '원자 개념'을 자산화. 새 경로의 다수를 기존 유닛 조립으로 즉시 충당"]},
+  {num:"원칙 02", t:"수준별 변형 캐싱", old:["수준이 바뀔 때마다 콘텐츠를 매번 새로 생성 — 비싸고 느림"], neu:["개념 1개에 (수준 × 표현방식) 변형을 캐싱. 재학습 땐 같은 설명 반복 없이 다른 변형 제공"]},
+  {num:"원칙 03", t:"적응형 진단", old:["모두에게 똑같은 고정 사전 시험 — 아는 것도 다시 풀어야 함"], neu:["지식 그래프 기반으로 분기. 이미 아는 노드는 건너뛰고 빈 곳만 학습 경로에 포함"]},
+  {num:"원칙 04", t:"생성·런타임 분리", old:["학습 화면이 콘텐츠를 즉석 생성 — 느리고 비용이 사용자에게 그대로 전가"], neu:["생성은 비동기 배치, 런타임은 라이브러리 조립. 인기 주제는 미리 생성해 즉시 제공"]},
+  {num:"원칙 05", t:"원인별 재학습", old:["틀리면 같은 내용을 그냥 다시 보여줌 — 또 막힘"], neu:["오답을 지식공백·오개념·실수로 구분해 처방. 반복 실패 유닛은 자동 재생성 대상으로 플래그"]},
+  {num:"원칙 06", t:"LLM 무종속", old:["특정 모델사 API에 코드가 묶여 교체·협상력·장애 대응이 어려움"], neu:["LLM Gateway로 Claude·GPT·Gemini를 정책으로 선택·혼용·폴백. 새 모델도 코드 수정 없이 교체"]},
+];
+const ptabs=document.getElementById('ptabs'), ppanel=document.getElementById('ppanel');
+principles.forEach((p,i)=>{
+  const b=document.createElement('button');
+  b.className='ptab'+(i===0?' on':''); b.textContent=(i+1)+'. '+p.t;
+  b.onclick=()=>{document.querySelectorAll('.ptab').forEach(x=>x.classList.remove('on'));b.classList.add('on');renderP(i);};
+  ptabs.appendChild(b);
+});
+function renderP(i){
+  const p=principles[i];
+  ppanel.innerHTML=`<div class="num">${p.num}</div><h3>${p.t}</h3>
+    <div class="prin-cmp">
+      <div class="cmp-box cmp-old"><div class="t">흔한 방식</div><div class="d">${p.old[0]}</div></div>
+      <div class="cmp-arrow">→</div>
+      <div class="cmp-box cmp-new"><div class="t">syllabusAI</div><div class="d">${p.neu[0]}</div></div>
+    </div>`;
+  ppanel.style.animation='none';ppanel.offsetHeight;ppanel.style.animation='';
+}
+renderP(0);
+
+// ===== scroll reveal =====
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');
+  if(e.target.classList.contains('moat-vis')){e.target.querySelectorAll('.lib-bar').forEach(b=>{const w=b.dataset.w;b.style.width='0';requestAnimationFrame(()=>{setTimeout(()=>b.style.width=w,80)});});}
+  io.unobserve(e.target);}})},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>

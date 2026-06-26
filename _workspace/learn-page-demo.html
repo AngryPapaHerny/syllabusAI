@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>syllabusAI — 학습 페이지 데모</title>
+<style>
+:root {
+  --bg:       #0F172A;
+  --bg2:      #1E293B;
+  --bg3:      #334155;
+  --bg4:      #0D1117;
+  --accent:   #6366F1;
+  --accent2:  #818CF8;
+  --accent-d: rgba(99,102,241,.15);
+  --accent-d2:rgba(99,102,241,.08);
+  --text:     #F1F5F9;
+  --text2:    #94A3B8;
+  --text3:    #64748B;
+  --border:   rgba(255,255,255,0.08);
+  --border2:  rgba(255,255,255,0.14);
+  --green:    #10B981;
+  --green-d:  rgba(16,185,129,.12);
+  --red:      #F43F5E;
+  --red-d:    rgba(244,63,94,.12);
+  --yellow:   #F59E0B;
+  --yellow-d: rgba(245,158,11,.12);
+  --r:  12px;
+  --r2:  8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;font-size:14px;line-height:1.5}
+
+/* ── TOP BAR ── */
+.topbar{height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 20px;gap:16px;position:sticky;top:0;z-index:200}
+.logo{font-size:15px;font-weight:700;color:var(--accent2);letter-spacing:-.3px;flex-shrink:0}
+.logo span{color:var(--text)}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text3);flex:1;overflow:hidden}
+.breadcrumb a{color:var(--text2);cursor:pointer;white-space:nowrap;transition:color .15s}
+.breadcrumb a:hover{color:var(--text)}
+.breadcrumb .sep{color:var(--text3)}
+.breadcrumb .cur{color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.streak-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:999px;font-size:12px;color:var(--yellow)}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:#fff}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:248px 1fr 280px;min-height:calc(100vh - 52px)}
+
+/* ── LEFT SIDEBAR ── */
+.sidebar{background:var(--bg2);border-right:1px solid var(--border);padding:20px 14px;overflow-y:auto;position:sticky;top:52px;height:calc(100vh - 52px)}
+.sb-header{padding:0 6px;margin-bottom:16px}
+.sb-course-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px}
+.sb-course-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.progress-wrap{margin-top:10px}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:5px}
+.prog-bg{height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .8s ease}
+
+.unit-section{margin-top:18px}
+.unit-section-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;padding:0 6px;margin-bottom:6px}
+.unit-row{display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:var(--r2);cursor:pointer;transition:background .1s;position:relative;margin-bottom:1px}
+.unit-row:hover:not(.active){background:rgba(255,255,255,.04)}
+.unit-row.active{background:var(--accent-d)}
+.unit-icon{width:20px;height:20px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;border:1.5px solid var(--bg3)}
+.unit-row.done .unit-icon{background:var(--green-d);border-color:rgba(16,185,129,.3);color:var(--green)}
+.unit-row.active .unit-icon{background:var(--accent-d);border-color:var(--accent);color:var(--accent2)}
+.unit-row.locked .unit-icon{background:var(--bg3);border-color:transparent;color:var(--text3)}
+.unit-row.todo .unit-icon{background:transparent;border-color:var(--border2);color:var(--text3)}
+.unit-info{flex:1;min-width:0}
+.unit-title{font-size:12px;font-weight:500;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.unit-row.active .unit-title{color:var(--accent2);font-weight:600}
+.unit-row.done .unit-title{color:var(--text2)}
+.unit-meta{font-size:10px;color:var(--text3);margin-top:1px}
+
+.connector{width:1.5px;height:12px;background:var(--border2);margin:0 0 0 19px}
+
+/* ── MAIN CONTENT ── */
+.main{padding:28px 32px;min-width:0}
+.unit-header{margin-bottom:24px}
+.unit-num{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.unit-name{font-size:22px;font-weight:700;letter-spacing:-.4px;color:var(--text);margin-bottom:10px}
+.unit-tags{display:flex;gap:8px;flex-wrap:wrap}
+.tag{padding:3px 10px;border-radius:999px;font-size:11px;font-weight:500}
+.tag-core{background:var(--accent-d);color:var(--accent2);border:1px solid rgba(99,102,241,.25)}
+.tag-time{background:rgba(255,255,255,.05);color:var(--text2);border:1px solid var(--border2)}
+.tag-status{background:rgba(245,158,11,.1);color:var(--yellow);border:1px solid rgba(245,158,11,.25)}
+
+/* ── PCSMA TABS ── */
+.tabs{display:flex;gap:6px;margin-bottom:20px}
+.tab{padding:7px 16px;border-radius:999px;border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px}
+.tab:hover:not(.active){border-color:var(--accent);color:var(--text2)}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.tab.done{border-color:rgba(16,185,129,.3);color:var(--green)}
+.tab-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.6}
+
+/* ── CONTENT PANELS ── */
+.panel{border:1px solid var(--border);background:var(--bg2);border-radius:var(--r);padding:24px;min-height:260px;display:none}
+.panel.active{display:block}
+
+.panel-lead{font-size:13px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.panel-icon{font-size:16px}
+.panel-body{font-size:14px;color:var(--text2);line-height:1.8}
+.panel-body strong{color:var(--text);font-weight:600}
+.panel-body p+p{margin-top:12px}
+.inline-code{background:var(--bg3);padding:2px 7px;border-radius:4px;font-family:'JetBrains Mono','Fira Code',monospace;font-size:12px;color:var(--accent2)}
+
+/* code block */
+.code-block{background:var(--bg4);border:1px solid rgba(255,255,255,.1);border-radius:var(--r2);overflow:hidden;margin-top:16px}
+.code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.07)}
+.code-dots{display:flex;gap:5px}
+.code-dot{width:10px;height:10px;border-radius:50%}
+.code-lang{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.05em}
+.code-actions{display:flex;gap:8px}
+.code-btn{padding:3px 10px;border-radius:var(--r2);border:1px solid var(--border2);background:transparent;color:var(--text3);font-size:11px;cursor:pointer;transition:all .15s}
+.code-btn:hover{border-color:var(--accent);color:var(--accent2)}
+.code-btn.run{background:var(--accent);color:#fff;border-color:var(--accent)}
+.code-btn.run:hover{opacity:.85}
+.code-area{padding:16px 18px;font-family:'JetBrains Mono','Fira Code',monospace;font-size:13px;line-height:1.65;overflow-x:auto}
+.kw{color:#FF7B72}.fn{color:#D2A8FF}.str{color:#A5D6FF}.cm{color:#6E7681}.num{color:#79C0FF}.op{color:#FF7B72}.cls{color:#FFA657}
+
+.run-output{border-top:1px solid rgba(255,255,255,.07);padding:12px 18px}
+.run-output-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.run-output-text{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--green);line-height:1.6}
+
+/* MCQ */
+.mcq-stem{font-size:15px;font-weight:500;color:var(--text);margin-bottom:18px;line-height:1.6}
+.mcq-opts{display:flex;flex-direction:column;gap:8px}
+.mcq-opt{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--border2);border-radius:var(--r2);cursor:pointer;transition:all .15s;user-select:none}
+.mcq-opt:hover:not(.disabled){border-color:var(--accent);background:var(--accent-d2)}
+.mcq-opt.selected{border-color:var(--accent);background:var(--accent-d)}
+.mcq-opt.correct{border-color:rgba(16,185,129,.5);background:var(--green-d)}
+.mcq-opt.wrong{border-color:rgba(244,63,94,.4);background:var(--red-d)}
+.mcq-opt.disabled{cursor:default}
+.opt-badge{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;border:1.5px solid var(--border2);color:var(--text3)}
+.mcq-opt.selected .opt-badge{border-color:var(--accent);color:var(--accent2);background:var(--accent-d)}
+.mcq-opt.correct .opt-badge{border-color:var(--green);color:var(--green);background:var(--green-d)}
+.mcq-opt.wrong .opt-badge{border-color:var(--red);color:var(--red);background:var(--red-d)}
+.opt-text{font-size:13px;color:var(--text2);padding-top:1px;line-height:1.5}
+.mcq-opt.correct .opt-text{color:var(--text)}
+.mcq-opt.wrong .opt-text{color:var(--text2)}
+
+.quiz-feedback{margin-top:14px;padding:12px 14px;border-radius:var(--r2);font-size:13px;line-height:1.6;display:none}
+.quiz-feedback.correct{background:var(--green-d);border:1px solid rgba(16,185,129,.25);color:#6EE7B7}
+.quiz-feedback.wrong{background:var(--red-d);border:1px solid rgba(244,63,94,.2);color:#FDA4AF}
+
+/* NAV FOOTER */
+.nav-footer{display:flex;align-items:center;justify-content:space-between;margin-top:24px;padding-top:18px;border-top:1px solid var(--border)}
+.btn{padding:8px 18px;border-radius:var(--r2);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.btn-ghost{border-color:var(--border2);background:transparent;color:var(--text2)}
+.btn-ghost:hover{border-color:var(--accent);color:var(--text)}
+.btn-ghost:disabled{opacity:.3;cursor:default}
+.btn-tutor{border-color:var(--accent);background:var(--accent-d);color:var(--accent2)}
+.btn-tutor:hover{background:var(--accent);color:#fff}
+.btn-tutor.open{background:var(--accent);color:#fff}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-primary:hover{opacity:.88}
+.btn-success{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-success:hover{opacity:.88}
+
+/* ── AI TUTOR ── */
+.tutor-panel{border:1px solid rgba(99,102,241,.25);border-radius:var(--r);overflow:hidden;margin-top:16px;display:none}
+.tutor-panel.open{display:block}
+.tutor-header{padding:12px 16px;background:rgba(99,102,241,.1);border-bottom:1px solid rgba(99,102,241,.15);display:flex;align-items:center;justify-content:space-between}
+.tutor-title{font-size:13px;font-weight:600;color:var(--accent2);display:flex;align-items:center;gap:6px}
+.tutor-concept-chip{padding:2px 8px;border-radius:999px;background:var(--accent-d);border:1px solid rgba(99,102,241,.3);font-size:11px;color:var(--accent2)}
+.tutor-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;line-height:1;padding:2px}
+.tutor-close:hover{color:var(--text2)}
+.chat-msgs{padding:16px;display:flex;flex-direction:column;gap:12px;max-height:280px;overflow-y:auto}
+.msg{max-width:80%}
+.msg.user{align-self:flex-end}
+.msg.ai{align-self:flex-start}
+.msg-bubble{padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.6}
+.msg.user .msg-bubble{background:var(--accent);color:#fff;border-bottom-right-radius:3px}
+.msg.ai .msg-bubble{background:var(--bg3);color:var(--text);border-bottom-left-radius:3px}
+.msg-time{font-size:10px;color:var(--text3);margin-top:3px}
+.msg.user .msg-time{text-align:right}
+.typing-indicator{display:flex;gap:4px;padding:6px 4px}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:bounce .9s infinite}
+.typing-dot:nth-child(2){animation-delay:.15s}
+.typing-dot:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+.cursor-blink{display:inline-block;width:2px;height:12px;background:var(--accent2);animation:blink .7s infinite;vertical-align:middle;margin-left:2px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.chat-input-row{padding:10px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
+.chat-inp{flex:1;padding:8px 12px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r2);color:var(--text);font-size:13px;outline:none;font-family:inherit}
+.chat-inp:focus{border-color:var(--accent)}
+.chat-inp::placeholder{color:var(--text3)}
+.send-btn{padding:8px 14px;background:var(--accent);border:none;border-radius:var(--r2);color:#fff;font-size:13px;cursor:pointer;font-weight:500}
+.send-btn:hover{opacity:.85}
+
+/* hint steps inside tutor */
+.hint-list{padding:0 16px 12px;display:flex;flex-direction:column;gap:6px}
+.hint-item{display:flex;gap:8px;align-items:flex-start;padding:7px 10px;background:var(--bg3);border-radius:var(--r2);font-size:12px;color:var(--text2)}
+.hint-num{width:18px;height:18px;border-radius:50%;background:var(--accent-d);color:var(--accent2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.hint-num.active{background:var(--accent);color:#fff}
+
+/* ── RIGHT PANEL ── */
+.right-panel{border-left:1px solid var(--border);padding:20px 16px;overflow-y:auto;position:sticky;top:52px;height:calc(100vh - 52px)}
+.rp-section{margin-bottom:22px}
+.rp-title{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+
+/* mastery */
+.mastery-item{margin-bottom:14px}
+.mastery-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.mastery-label{font-size:12px;color:var(--text2)}
+.mastery-val{font-size:13px;font-weight:700;color:var(--accent2)}
+.mastery-val.high{color:var(--green)}
+.mastery-val.low{color:var(--yellow)}
+.mbar-bg{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden}
+.mbar-fill{height:100%;border-radius:3px;transition:width 1.2s ease}
+.mbar-fill.accent{background:var(--accent)}
+.mbar-fill.green{background:var(--green)}
+.mbar-fill.yellow{background:var(--yellow)}
+
+/* next unit card */
+.next-card{background:var(--accent-d);border:1px solid rgba(99,102,241,.2);border-radius:var(--r2);padding:12px;cursor:pointer;transition:all .15s;margin-bottom:8px}
+.next-card:hover{border-color:var(--accent);background:rgba(99,102,241,.2)}
+.next-card-label{font-size:10px;font-weight:600;color:var(--accent2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.next-card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px}
+.next-card-sub{font-size:11px;color:var(--text3)}
+
+/* recent activity */
+.activity-row{display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.activity-row:last-child{border-bottom:none}
+.activity-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0}
+.activity-icon.ok{background:var(--green-d);color:var(--green)}
+.activity-icon.ng{background:var(--red-d);color:var(--red)}
+.activity-icon.warn{background:var(--yellow-d);color:var(--yellow)}
+.activity-text{flex:1;color:var(--text2);line-height:1.4}
+.activity-score{font-size:11px;font-weight:600}
+.activity-score.ok{color:var(--green)}
+.activity-score.ng{color:var(--red)}
+
+/* relearn banner */
+.relearn-banner{background:var(--red-d);border:1px solid rgba(244,63,94,.2);border-radius:var(--r2);padding:10px 12px;font-size:12px;color:#FDA4AF;line-height:1.5;margin-top:10px}
+.relearn-banner strong{color:#FCA5A5}
+
+/* section step tracker */
+.step-track{display:flex;gap:6px;margin-bottom:8px}
+.step-node{flex:1;height:3px;border-radius:2px;background:var(--bg3);transition:background .3s}
+.step-node.done{background:var(--green)}
+.step-node.active{background:var(--accent)}
+
+/* transition */
+.fade{animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bg3);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text3)}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="logo">syllabus<span>AI</span></div>
+  <div class="breadcrumb">
+    <a onclick="alert('대시보드로 이동')">대시보드</a>
+    <span class="sep">/</span>
+    <a onclick="alert('커리큘럼 목록으로 이동')">React 풀스택 개발</a>
+    <span class="sep">/</span>
+    <span class="cur">React Hooks 완전 정복</span>
+  </div>
+  <div class="topbar-right">
+    <div class="streak-chip">🔥 7일 연속</div>
+    <div class="avatar">김</div>
+  </div>
+</div>
+
+<div class="layout">
+
+<!-- ════════════════════════════════════
+     LEFT SIDEBAR
+════════════════════════════════════ -->
+<div class="sidebar">
+  <div class="sb-header">
+    <div class="sb-course-label">현재 커리큘럼</div>
+    <div class="sb-course-name">React 풀스택 개발 입문 → 중급</div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>전체 진도</span><span style="color:var(--accent2);font-weight:600">3 / 7</span></div>
+      <div class="prog-bg"><div class="prog-fill" id="sb-prog" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="unit-section">
+    <div class="unit-section-label">완료</div>
+
+    <div class="unit-row done" onclick="alert('JavaScript 기초 복습으로 이동')">
+      <div class="unit-icon">✓</div>
+      <div class="unit-info">
+        <div class="unit-title">JavaScript 기초 복습</div>
+        <div class="unit-meta">변수·함수·배열 · 완료</div>
+      </div>
+    </div>
+    <div class="connector"></div>
+    <div class="unit-row done" onclick="alert('React 컴포넌트로 이동')">
+      <div class="unit-icon">✓</div>
+      <div class="unit-info">
+        <div class="unit-title">React 컴포넌트 이해</div>
+        <div class="unit-meta">JSX · Props · 완료</div>
+      </div>
+    </div>
+    <div class="connector"></div>
+  </div>
+
+  <div class="unit-section">
+    <div class="unit-section-label">진행 중</div>
+    <div class="unit-row active">
+      <div class="unit-icon">▶</div>
+      <div class="unit-info">
+        <div class="unit-title">React Hooks 완전 정복</div>
+        <div class="unit-meta">useState · useEffect · 진행 중</div>
+      </div>
+    </div>
+    <div class="connector"></div>
+  </div>
+
+  <div class="unit-section">
+    <div class="unit-section-label">예정</div>
+    <div class="unit-row todo" onclick="alert('잠김: 현재 유닛을 먼저 완료하세요')">
+      <div class="unit-icon">4</div>
+      <div class="unit-info">
+        <div class="unit-title">useContext + Redux</div>
+        <div class="unit-meta">전역 상태 관리 · 예정</div>
+      </div>
+    </div>
+    <div class="connector"></div>
+    <div class="unit-row todo" onclick="alert('잠김')">
+      <div class="unit-icon">5</div>
+      <div class="unit-info">
+        <div class="unit-title">Next.js App Router</div>
+        <div class="unit-meta">서버 컴포넌트 · 예정</div>
+      </div>
+    </div>
+    <div class="connector"></div>
+    <div class="unit-row todo" onclick="alert('잠김')">
+      <div class="unit-icon">6</div>
+      <div class="unit-info">
+        <div class="unit-title">Supabase 연동</div>
+        <div class="unit-meta">DB·Auth · 예정</div>
+      </div>
+    </div>
+    <div class="connector"></div>
+    <div class="unit-row todo" onclick="alert('잠김')">
+      <div class="unit-icon">7</div>
+      <div class="unit-info">
+        <div class="unit-title">배포 &amp; CI/CD</div>
+        <div class="unit-meta">Vercel · 예정</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════ -->
+<div class="main">
+
+  <!-- Unit Header -->
+  <div class="unit-header">
+    <div class="unit-num">Unit 3 of 7</div>
+    <div class="unit-name">React Hooks 완전 정복</div>
+    <div class="unit-tags">
+      <span class="tag tag-core">핵심 개념</span>
+      <span class="tag tag-time">⏱ 약 40분</span>
+      <span class="tag tag-status">진행 중</span>
+    </div>
+  </div>
+
+  <!-- Section Progress Track -->
+  <div class="step-track" id="step-track">
+    <div class="step-node active" id="sn-P"></div>
+    <div class="step-node" id="sn-C"></div>
+    <div class="step-node" id="sn-S"></div>
+    <div class="step-node" id="sn-M"></div>
+    <div class="step-node" id="sn-A"></div>
+  </div>
+
+  <!-- PCSMA Tabs -->
+  <div class="tabs">
+    <button class="tab active" id="tab-P" onclick="switchSection('P')"><span class="tab-dot"></span>P 문제 제기</button>
+    <button class="tab" id="tab-C" onclick="switchSection('C')"><span class="tab-dot"></span>C 개념</button>
+    <button class="tab" id="tab-S" onclick="switchSection('S')"><span class="tab-dot"></span>S 코드</button>
+    <button class="tab" id="tab-M" onclick="switchSection('M')"><span class="tab-dot"></span>M 동기</button>
+    <button class="tab" id="tab-A" onclick="switchSection('A')"><span class="tab-dot"></span>A 평가</button>
+  </div>
+
+  <!-- ── PANEL P ── -->
+  <div class="panel active fade" id="panel-P">
+    <div class="panel-lead"><span class="panel-icon">🤔</span>왜 배워야 할까요?</div>
+    <div class="panel-body">
+      <p>여러분이 처음 React를 배울 때, 컴포넌트 안에서 <strong>데이터를 기억</strong>하게 만들려면 어떻게 해야 할지 막막했던 경험이 있으신가요?</p>
+      <p>예를 들어, 쇼핑몰에서 <strong>장바구니 수량 카운터</strong>를 만든다고 상상해보세요. "+" 버튼을 클릭할 때마다 숫자가 1씩 올라가야 합니다. 그런데 일반 변수로는 화면이 바뀌지 않습니다. 왜일까요?</p>
+      <p>또 다른 상황: 사용자가 페이지에 들어왔을 때 <strong>서버에서 데이터를 불러오고</strong> 싶습니다. 이 작업은 렌더링이 끝난 후 실행돼야 하는데, 어디에 코드를 작성해야 할까요?</p>
+      <p>바로 이 두 가지 문제를 해결하는 것이 <strong>React Hooks</strong>입니다. <span class="inline-code">useState</span>와 <span class="inline-code">useEffect</span>만 이해해도 실무 React 개발의 80%를 커버할 수 있습니다.</p>
+    </div>
+  </div>
+
+  <!-- ── PANEL C ── -->
+  <div class="panel fade" id="panel-C">
+    <div class="panel-lead"><span class="panel-icon">📖</span>개념 설명</div>
+    <div class="panel-body">
+      <p><strong>Hook</strong>은 함수형 컴포넌트에서 React의 상태(state)와 생명주기(lifecycle) 기능을 사용할 수 있게 해주는 함수입니다. React 16.8부터 도입됐으며, 클래스 컴포넌트 없이도 복잡한 상태 관리가 가능해졌습니다.</p>
+      <p style="margin-top:16px"><strong>① useState — 상태 저장소</strong></p>
+      <p><span class="inline-code">const [count, setCount] = useState(0)</span></p>
+      <p>컴포넌트 내부에 <em>기억 공간</em>을 만듭니다. <strong>count</strong>는 현재 값, <strong>setCount</strong>는 값을 바꾸는 함수입니다. setCount를 호출하면 React가 해당 컴포넌트를 자동으로 다시 렌더링합니다.</p>
+      <p style="margin-top:16px"><strong>② useEffect — 사이드 이펙트 처리</strong></p>
+      <p>렌더링이 끝난 후 실행할 코드를 등록합니다. API 호출, 타이머, DOM 직접 조작 등 <em>렌더링 외부 세계와 소통</em>하는 모든 작업에 사용합니다.</p>
+      <p>핵심은 <strong>의존성 배열</strong>입니다: 배열 안의 값이 바뀔 때만 effect가 재실행됩니다. 빈 배열 <span class="inline-code">[]</span>이면 마운트 시 한 번만 실행됩니다.</p>
+    </div>
+  </div>
+
+  <!-- ── PANEL S ── -->
+  <div class="panel fade" id="panel-S">
+    <div class="panel-lead"><span class="panel-icon">💻</span>코드 예제</div>
+    <div class="panel-body">
+      <p>아래 예제를 직접 실행하고 수정해보세요. <span class="inline-code">userId</span>가 바뀔 때만 useEffect가 재실행되는 동작을 확인해보세요.</p>
+    </div>
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-dots">
+          <div class="code-dot" style="background:#FF5F57"></div>
+          <div class="code-dot" style="background:#FFBD2E"></div>
+          <div class="code-dot" style="background:#28CA41"></div>
+        </div>
+        <span class="code-lang">JavaScript — React</span>
+        <div class="code-actions">
+          <button class="code-btn" onclick="copyCode()">복사</button>
+          <button class="code-btn run" onclick="runCode()">▶ 실행</button>
+        </div>
+      </div>
+      <div class="code-area" id="code-area"><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">UserProfile</span>({ userId }) {
+  <span class="cm">// 상태 선언: user 데이터와 로딩 상태</span>
+  <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>(<span class="kw">null</span>);
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="kw">true</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="cm">// userId가 바뀔 때마다 새 데이터를 가져옴</span>
+    <span class="fn">setLoading</span>(<span class="kw">true</span>);
+    <span class="fn">fetch</span>(<span class="str">`/api/users/<span class="num">${userId}</span>`</span>)
+      .then(res => res.<span class="fn">json</span>())
+      .then(data => <span class="fn">setUser</span>(data))
+      .<span class="kw">finally</span>(() => <span class="fn">setLoading</span>(<span class="kw">false</span>));
+
+    <span class="cm">// 클린업: 다음 effect 실행 전 이전 요청 취소</span>
+    <span class="kw">return</span> () => { <span class="cm">/* AbortController 등 정리 */</span> };
+  }, [userId]); <span class="cm">// userId가 의존성 — 바뀌면 effect 재실행</span>
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> &lt;<span class="fn">Spinner</span> /&gt;;
+  <span class="kw">return</span> (
+    &lt;<span class="fn">div</span>&gt;
+      &lt;<span class="fn">h1</span>&gt;{user.name}&lt;/<span class="fn">h1</span>&gt;
+      &lt;<span class="fn">p</span>&gt;{user.email}&lt;/<span class="fn">p</span>&gt;
+    &lt;/<span class="fn">div</span>&gt;
+  );
+}</div>
+      <div class="run-output" id="run-output" style="display:none">
+        <div class="run-output-label">출력 결과</div>
+        <div class="run-output-text" id="run-text"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── PANEL M ── -->
+  <div class="panel fade" id="panel-M">
+    <div class="panel-lead"><span class="panel-icon">🚀</span>왜 중요한가요?</div>
+    <div class="panel-body">
+      <p>React Hooks는 <strong>2019년 React 16.8</strong>에서 정식 출시된 이후, 지금은 React 개발의 표준이 됐습니다. 클래스 컴포넌트를 사용하는 코드베이스는 점점 줄어들고 있습니다.</p>
+      <p style="margin-top:12px">📊 <strong>실무 데이터:</strong></p>
+      <p>• 국내 채용 공고의 <strong>95% 이상</strong>이 Hooks 이해를 필수 역량으로 요구합니다<br>
+         • React, Next.js, React Native — 모두 Hooks 기반입니다<br>
+         • GitHub 상위 React 프로젝트의 <strong>98%</strong>가 함수형 컴포넌트 + Hooks</p>
+      <p style="margin-top:12px">💼 <strong>커리어 연결:</strong></p>
+      <p>이 개념을 이해하면 다음 유닛 <strong>useContext + Redux</strong>가 훨씬 쉬워집니다. 전역 상태 관리의 필요성도 자연스럽게 느끼게 될 거예요. Next.js의 서버 컴포넌트 vs 클라이언트 컴포넌트 구분도 Hooks가 핵심입니다.</p>
+    </div>
+  </div>
+
+  <!-- ── PANEL A ── -->
+  <div class="panel fade" id="panel-A">
+    <div class="panel-lead"><span class="panel-icon">📝</span>평가 — 이해도 확인</div>
+    <div class="panel-body">
+      <div class="mcq-stem">
+        <span class="inline-code">useEffect</span>의 두 번째 인자인 의존성 배열을 <span class="inline-code">[]</span> 빈 배열로 넘기면 언제 실행되나요?
+      </div>
+      <div class="mcq-opts" id="quiz-opts">
+        <div class="mcq-opt" onclick="selectOpt(this, false, 0)">
+          <div class="opt-badge" id="badge-0">①</div>
+          <div class="opt-text">컴포넌트가 렌더링될 때마다 실행된다</div>
+        </div>
+        <div class="mcq-opt" onclick="selectOpt(this, true, 1)">
+          <div class="opt-badge" id="badge-1">②</div>
+          <div class="opt-text">컴포넌트가 처음 마운트될 때 한 번만 실행된다</div>
+        </div>
+        <div class="mcq-opt" onclick="selectOpt(this, false, 2)">
+          <div class="opt-badge" id="badge-2">③</div>
+          <div class="opt-text">의존성 배열의 값이 변경될 때마다 실행된다</div>
+        </div>
+        <div class="mcq-opt" onclick="selectOpt(this, false, 3)">
+          <div class="opt-badge" id="badge-3">④</div>
+          <div class="opt-text">컴포넌트가 언마운트될 때만 실행된다</div>
+        </div>
+      </div>
+      <div class="quiz-feedback" id="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- Nav Footer -->
+  <div class="nav-footer">
+    <button class="btn btn-ghost" id="btn-prev" onclick="prevSection()" disabled>← 이전</button>
+    <button class="btn btn-tutor" id="btn-tutor" onclick="toggleTutor()">🤖 AI 튜터에게 질문</button>
+    <button class="btn btn-primary" id="btn-next" onclick="nextSection()">다음 →</button>
+  </div>
+
+  <!-- AI Tutor Panel -->
+  <div class="tutor-panel" id="tutor-panel">
+    <div class="tutor-header">
+      <div class="tutor-title">
+        🤖 AI 튜터
+        <span class="tutor-concept-chip">React Hooks</span>
+      </div>
+      <button class="tutor-close" onclick="toggleTutor()">✕</button>
+    </div>
+    <!-- hint steps -->
+    <div class="hint-list">
+      <div class="hint-item"><div class="hint-num active">1</div><div>개념의 맥락을 파악하도록 유도 중…</div></div>
+      <div class="hint-item"><div class="hint-num">2</div><div>구체적 예시·반례로 사고 확장</div></div>
+      <div class="hint-item"><div class="hint-num">3</div><div>정답 근접 힌트 제공 (직접 답 미제공)</div></div>
+    </div>
+    <div class="chat-msgs" id="chat-msgs">
+      <div class="msg user">
+        <div class="msg-bubble">useEffect의 의존성 배열이 왜 필요한가요?</div>
+        <div class="msg-time">방금</div>
+      </div>
+      <div class="msg ai">
+        <div class="msg-bubble" id="tutor-ai-bubble"><span id="tutor-ai-text"></span><span class="cursor-blink" id="tutor-cursor"></span></div>
+        <div class="msg-time">방금</div>
+      </div>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-inp" id="chat-inp" type="text" placeholder="궁금한 점을 물어보세요…" onkeydown="if(event.key==='Enter')sendMsg()" />
+      <button class="send-btn" onclick="sendMsg()">전송</button>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ════════════════════════════════════
+     RIGHT PANEL
+════════════════════════════════════ -->
+<div class="right-panel">
+
+  <!-- Mastery -->
+  <div class="rp-section">
+    <div class="rp-title">개념 마스터리</div>
+    <div class="mastery-item">
+      <div class="mastery-row">
+        <span class="mastery-label">React Hooks</span>
+        <span class="mastery-val low" id="mastery-hooks">42%</span>
+      </div>
+      <div class="mbar-bg"><div class="mbar-fill yellow" id="mbar-hooks" style="width:0%"></div></div>
+    </div>
+    <div class="mastery-item">
+      <div class="mastery-row">
+        <span class="mastery-label">React 컴포넌트</span>
+        <span class="mastery-val high">87%</span>
+      </div>
+      <div class="mbar-bg"><div class="mbar-fill green" id="mbar-comp" style="width:0%"></div></div>
+    </div>
+    <div class="mastery-item">
+      <div class="mastery-row">
+        <span class="mastery-label">JavaScript 기초</span>
+        <span class="mastery-val high">94%</span>
+      </div>
+      <div class="mbar-bg"><div class="mbar-fill green" id="mbar-js" style="width:0%"></div></div>
+    </div>
+    <div class="mastery-item">
+      <div class="mastery-row">
+        <span class="mastery-label">useContext</span>
+        <span class="mastery-val" style="color:var(--text3)">미학습</span>
+      </div>
+      <div class="mbar-bg"><div class="mbar-fill accent" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- Next Up -->
+  <div class="rp-section">
+    <div class="rp-title">다음 유닛</div>
+    <div class="next-card" onclick="alert('useContext + Redux 유닛으로 이동')">
+      <div class="next-card-label">Unit 4 · 예상 50분</div>
+      <div class="next-card-title">useContext + Redux</div>
+      <div class="next-card-sub">전역 상태 관리 패턴 선택 기준</div>
+    </div>
+    <div class="next-card" style="background:transparent;border-color:var(--border2);" onclick="alert('Next.js App Router 유닛으로 이동')">
+      <div class="next-card-label">Unit 5 · 예상 60분</div>
+      <div class="next-card-title">Next.js App Router</div>
+      <div class="next-card-sub">서버 컴포넌트 vs 클라이언트</div>
+    </div>
+  </div>
+
+  <!-- Recent Results -->
+  <div class="rp-section">
+    <div class="rp-title">최근 평가 결과</div>
+    <div class="activity-row">
+      <div class="activity-icon ok">✓</div>
+      <div class="activity-text">useState 기본 사용법</div>
+      <div class="activity-score ok">100%</div>
+    </div>
+    <div class="activity-row">
+      <div class="activity-icon ok">✓</div>
+      <div class="activity-text">JSX 문법과 렌더링</div>
+      <div class="activity-score ok">90%</div>
+    </div>
+    <div class="activity-row">
+      <div class="activity-icon warn">!</div>
+      <div class="activity-text">컴포넌트 생명주기</div>
+      <div class="activity-score" style="color:var(--yellow)">70%</div>
+    </div>
+    <div class="activity-row">
+      <div class="activity-icon ng">✗</div>
+      <div class="activity-text">useEffect 의존성 배열</div>
+      <div class="activity-score ng">40%</div>
+    </div>
+    <div class="relearn-banner">
+      💡 <strong>useEffect 의존성 배열</strong> 개념이 약합니다. 이 유닛의 S·A 섹션을 집중적으로 학습해보세요.
+    </div>
+  </div>
+
+</div><!-- /right-panel -->
+
+</div><!-- /layout -->
+
+<script>
+// ────────────────────────────────────
+//  STATE
+// ────────────────────────────────────
+const SECTIONS = ['P','C','S','M','A'];
+const LABELS = {P:'P 문제 제기',C:'C 개념',S:'S 코드',M:'M 동기',A:'A 평가'};
+let cur = 0;
+let quizDone = false;
+let tutorOpen = false;
+let typingDone = false;
+const visitedSections = new Set(['P']);
+
+// ────────────────────────────────────
+//  INIT
+// ────────────────────────────────────
+window.onload = () => {
+  // animate progress bars
+  setTimeout(() => {
+    document.getElementById('sb-prog').style.width = '43%';
+    document.getElementById('mbar-hooks').style.width = '42%';
+    document.getElementById('mbar-comp').style.width = '87%';
+    document.getElementById('mbar-js').style.width = '94%';
+  }, 300);
+};
+
+// ────────────────────────────────────
+//  SECTION NAVIGATION
+// ────────────────────────────────────
+function switchSection(s) {
+  const idx = SECTIONS.indexOf(s);
+  if (idx === -1) return;
+  cur = idx;
+  visitedSections.add(s);
+  renderSection();
+}
+
+function nextSection() {
+  if (cur < SECTIONS.length - 1) { cur++; visitedSections.add(SECTIONS[cur]); renderSection(); }
+}
+
+function prevSection() {
+  if (cur > 0) { cur--; renderSection(); }
+}
+
+function renderSection() {
+  const s = SECTIONS[cur];
+
+  // panels
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-' + s);
+  panel.classList.add('active');
+  // trigger reflow for animation
+  panel.classList.remove('fade');
+  void panel.offsetWidth;
+  panel.classList.add('fade');
+
+  // tabs
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.remove('active');
+    if (visitedSections.has(SECTIONS[i]) && i !== cur) {
+      t.classList.add('done');
+    } else {
+      t.classList.remove('done');
+    }
+  });
+  document.getElementById('tab-' + s).classList.add('active');
+  document.getElementById('tab-' + s).classList.remove('done');
+
+  // step track
+  SECTIONS.forEach((sec, i) => {
+    const node = document.getElementById('sn-' + sec);
+    node.className = 'step-node';
+    if (i < cur) node.classList.add('done');
+    else if (i === cur) node.classList.add('active');
+  });
+
+  // prev/next buttons
+  document.getElementById('btn-prev').disabled = cur === 0;
+  const btnNext = document.getElementById('btn-next');
+  if (s === 'A') {
+    if (quizDone) {
+      btnNext.textContent = '다음 유닛 →';
+      btnNext.className = 'btn btn-success';
+      btnNext.onclick = () => alert('다음 유닛(useContext + Redux)으로 이동합니다!');
+    } else {
+      btnNext.textContent = '다음 유닛 →';
+      btnNext.className = 'btn btn-primary';
+      btnNext.style.opacity = '0.4';
+      btnNext.onclick = () => alert('평가를 먼저 완료해주세요.');
+    }
+  } else {
+    btnNext.textContent = '다음 →';
+    btnNext.className = 'btn btn-primary';
+    btnNext.style.opacity = '';
+    btnNext.onclick = nextSection;
+  }
+}
+
+// ────────────────────────────────────
+//  MCQ QUIZ
+// ────────────────────────────────────
+function selectOpt(el, correct, idx) {
+  if (quizDone) return;
+  quizDone = true;
+
+  // disable all
+  document.querySelectorAll('.mcq-opt').forEach(o => o.classList.add('disabled'));
+  el.classList.add(correct ? 'correct' : 'wrong');
+  document.getElementById('badge-' + idx).textContent = correct ? '✓' : '✗';
+
+  if (!correct) {
+    // highlight correct answer (index 1)
+    const opts = document.querySelectorAll('.mcq-opt');
+    opts[1].classList.add('correct');
+    document.getElementById('badge-1').textContent = '✓';
+  }
+
+  const fb = document.getElementById('quiz-feedback');
+  fb.style.display = 'block';
+  fb.className = 'quiz-feedback ' + (correct ? 'correct' : 'wrong');
+  fb.innerHTML = correct
+    ? '✓ <strong>정답입니다!</strong> 빈 배열 <code style="background:rgba(255,255,255,.1);padding:1px 5px;border-radius:3px">[]</code>은 감시할 값이 없으므로 마운트 시 한 번만 실행되며, 클린업은 언마운트 시 실행됩니다.'
+    : '✗ <strong>오답입니다.</strong> 의존성 배열이 비어있으면 어떤 값도 감시하지 않으므로, 마운트 시 딱 한 번만 실행됩니다. 정답은 ②번입니다.';
+
+  // update mastery visual
+  if (correct) {
+    document.getElementById('mastery-hooks').textContent = '65%';
+    document.getElementById('mastery-hooks').className = 'mastery-val accent';
+    document.getElementById('mbar-hooks').style.background = 'var(--accent)';
+    document.getElementById('mbar-hooks').style.width = '65%';
+  }
+
+  // unlock next button
+  const btnNext = document.getElementById('btn-next');
+  btnNext.textContent = '다음 유닛 →';
+  btnNext.className = 'btn btn-success';
+  btnNext.style.opacity = '';
+  btnNext.onclick = () => alert('다음 유닛(useContext + Redux)으로 이동합니다!');
+}
+
+// ────────────────────────────────────
+//  CODE SANDBOX
+// ────────────────────────────────────
+function runCode() {
+  const out = document.getElementById('run-output');
+  const txt = document.getElementById('run-text');
+  out.style.display = 'block';
+  txt.textContent = '';
+  const lines = [
+    '> 실행 환경 준비 중…',
+    '> 코드 분석 완료',
+    '> userId=1 로 첫 렌더링:',
+    '  loading: true → false',
+    '  useEffect 실행됨 (의존성: userId=1)',
+    '  user: { name: "김학습", email: "user@test.com" }',
+    '> userId=2 로 변경 (re-render):',
+    '  useEffect 재실행됨 (userId가 1→2로 변경)',
+    '  이전 클린업 실행됨',
+    '  user: { name: "이리액트", email: "react@test.com" }',
+    '✓ 완료 — 의존성 배열 [userId] 동작 확인됨',
+  ];
+  let i = 0;
+  const t = setInterval(() => {
+    txt.textContent += (i > 0 ? '\n' : '') + lines[i++];
+    if (i >= lines.length) clearInterval(t);
+  }, 120);
+}
+
+function copyCode() {
+  navigator.clipboard?.writeText('import { useState, useEffect } from "react";\n// ... 예제 코드').then(() => alert('코드가 클립보드에 복사됐습니다!'));
+}
+
+// ────────────────────────────────────
+//  AI TUTOR
+// ────────────────────────────────────
+const TUTOR_MSG = "좋은 질문이에요! 먼저, useEffect가 의존성 배열 없이 실행된다면 어떤 일이 벌어질지 한번 상상해볼까요? 🤔\n\n예를 들어, 아래 상황에서 어떤 문제가 생길 것 같나요?\n\n```\nuseEffect(() => {\n  fetch('/api/user').then(...);\n}); // 배열 없음!\n```\n\n렌더링마다 fetch가 호출된다면... 무한 루프가 될까요?";
+
+function toggleTutor() {
+  tutorOpen = !tutorOpen;
+  const panel = document.getElementById('tutor-panel');
+  const btn = document.getElementById('btn-tutor');
+  panel.classList.toggle('open', tutorOpen);
+  btn.classList.toggle('open', tutorOpen);
+  btn.textContent = tutorOpen ? '✕ 튜터 닫기' : '🤖 AI 튜터에게 질문';
+  if (tutorOpen && !typingDone) startTutorTyping();
+}
+
+function startTutorTyping() {
+  const el = document.getElementById('tutor-ai-text');
+  const cursor = document.getElementById('tutor-cursor');
+  let i = 0;
+  const t = setInterval(() => {
+    el.textContent = TUTOR_MSG.slice(0, ++i);
+    document.getElementById('chat-msgs').scrollTop = 9999;
+    if (i >= TUTOR_MSG.length) {
+      clearInterval(t);
+      cursor.style.display = 'none';
+      typingDone = true;
+    }
+  }, 18);
+}
+
+function sendMsg() {
+  const inp = document.getElementById('chat-inp');
+  const txt = inp.value.trim();
+  if (!txt) return;
+  const msgs = document.getElementById('chat-msgs');
+  msgs.innerHTML += `<div class="msg user"><div class="msg-bubble">${txt}</div><div class="msg-time">방금</div></div>`;
+  inp.value = '';
+  // typing indicator
+  const tid = 'typing-' + Date.now();
+  msgs.innerHTML += `<div class="msg ai" id="${tid}"><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div></div>`;
+  msgs.scrollTop = msgs.scrollHeight;
+  setTimeout(() => {
+    const replies = [
+      "흥미로운 질문이에요! 생각해봐요 — 의존성 배열을 통해 React는 '이 값이 바뀌어야만 다시 실행해'라고 알 수 있어요. 배열이 없다면 어떻게 될까요?",
+      "좋은 접근이에요! 직접 코드 실행 창에서 의존성 배열을 제거하고 어떻게 되는지 실험해보면 어떨까요? 💡",
+      "맞아요! 이제 한 걸음 더: 클린업 함수가 왜 필요한지도 같이 생각해볼 수 있을까요?",
+    ];
+    const reply = replies[Math.floor(Math.random() * replies.length)];
+    const el = document.getElementById(tid);
+    let j = 0;
+    const rid = 'r' + Date.now();
+    el.innerHTML = `<div class="msg-bubble"><span id="${rid}"></span><span class="cursor-blink"></span></div><div class="msg-time">방금</div>`;
+    const ti = setInterval(() => {
+      document.getElementById(rid).textContent = reply.slice(0, ++j);
+      msgs.scrollTop = msgs.scrollHeight;
+      if (j >= reply.length) {
+        clearInterval(ti);
+        el.querySelector('.cursor-blink').remove();
+      }
+    }, 22);
+  }, 900);
+}
+</script>
+</body>
+</html>

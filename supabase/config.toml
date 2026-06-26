@@ -1,0 +1,77 @@
+# syllabusAI — Supabase 로컬 개발 설정
+# 공식 문서: https://supabase.com/docs/guides/local-development
+
+[api]
+# 로컬 Supabase API 포트
+port = 54321
+# API 스키마 화이트리스트
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+# API 최대 행 수 제한
+max_rows = 1000
+
+[db]
+# 로컬 Postgres 포트
+port = 54322
+# 로컬 DB 섀도 포트 (마이그레이션 검증용)
+shadow_port = 54320
+major_version = 15
+
+[db.pooler]
+enabled = false
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 20
+max_client_conn = 100
+
+[realtime]
+enabled = true
+# 실시간 구독 인증 방식
+ip_version = "IPv4"
+max_header_length = 4096
+
+[studio]
+# Supabase Studio (로컬 대시보드) 포트
+port = 54323
+api_url = "http://localhost"
+
+[inbucket]
+# 로컬 이메일 캐치올 (Auth 이메일 테스트)
+port = 54324
+smtp_port = 54325
+pop3_port = 54326
+
+[storage]
+# 로컬 파일 스토리지 (Phase 0에서 미사용)
+enabled = true
+file_size_limit = "50MiB"
+
+[auth]
+enabled = true
+# JWT 만료 시간 (초)
+jwt_expiry = 3600
+# 이메일 확인 필요 여부 — 로컬 개발 시 false 권장
+enable_signup = true
+# 로컬에서는 이메일 확인 비활성화 (inbucket으로 대체 가능)
+enable_confirmations = false
+
+[auth.email]
+# 비밀번호 최소 길이
+min_password_length = 8
+# 로컬 개발: inbucket 경유 이메일 수신
+enable_signup = true
+
+[auth.sms]
+# SMS 인증 — Phase 0 미사용
+enable_signup = false
+
+[functions]
+# Edge Function 기본 설정
+# JWT 검증: gen-worker는 service role key로 직접 인증하므로 false
+# 참고: supabase functions deploy gen-worker --no-verify-jwt
+
+[functions.gen-worker]
+verify_jwt = false
+
+[analytics]
+enabled = false

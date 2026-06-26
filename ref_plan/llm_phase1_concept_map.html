@@ -1,0 +1,349 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--p:#534AB7;--pl:#EEEDFE;--pd:#3C3489;--t:#0F6E56;--tl:#E1F5EE;--a:#BA7517;--al:#FAEEDA;--c:#993C1D;--cl:#FAECE7;--b:#185FA5;--bl:#E6F1FB}
+.wrap{padding:1rem 0 2rem;font-family:var(--font-sans)}
+.top-nav{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;flex-wrap:wrap}
+.nav-chip{padding:5px 12px;border-radius:999px;font-size:12px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-secondary);transition:all .2s;white-space:nowrap}
+.nav-chip.on{background:var(--p);color:#fff;border-color:var(--p)}
+.content-area{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem;display:flex;flex-direction:column;gap:10px}
+.card.full{grid-column:1/-1}
+.card-head{display:flex;align-items:center;gap:10px}
+.card-icon{width:36px;height:36px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.card-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.card-sub{font-size:12px;color:var(--color-text-secondary);margin-top:1px}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}
+.body-text{font-size:13px;color:var(--color-text-primary);line-height:1.65}
+.analogy-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;color:var(--color-text-primary);line-height:1.6;border-left:3px solid var(--p)}
+.class-box{background:#EEEDFE;border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;color:#3C3489;line-height:1.6}
+.tip-row{display:flex;gap:6px;align-items:flex-start}
+.tip-dot{width:6px;height:6px;border-radius:50%;background:var(--p);flex-shrink:0;margin-top:5px}
+.tip-text{font-size:13px;color:var(--color-text-primary);line-height:1.6}
+.vis-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:4px 0}
+.token{padding:3px 8px;border-radius:4px;font-size:12px;font-weight:500}
+.flow-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:12px}
+.flow-box{padding:4px 10px;border-radius:var(--border-radius-md);font-size:12px;font-weight:500;white-space:nowrap}
+.arrow{color:var(--color-text-secondary);font-size:14px}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:2px 0}
+.tag-row{display:flex;gap:5px;flex-wrap:wrap}
+.tag{padding:2px 8px;border-radius:999px;font-size:11px;border:0.5px solid}
+.ask-btn{margin-top:auto;padding:9px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);font-size:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:background .15s}
+.ask-btn:hover{background:var(--color-background-secondary)}
+.overview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.ov-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center;cursor:pointer;border:0.5px solid var(--color-border-tertiary);transition:all .2s}
+.ov-card:hover{border-color:var(--p)}
+.ov-icon{font-size:22px;margin-bottom:4px}
+.ov-title{font-size:11px;color:var(--color-text-secondary);line-height:1.4}
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-row{display:flex;gap:10px;align-items:flex-start;padding:6px 0}
+.tl-dot-wrap{display:flex;flex-direction:column;align-items:center;gap:0;width:24px;flex-shrink:0}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.tl-line{width:1.5px;flex:1;min-height:12px;background:var(--color-border-tertiary)}
+.tl-content{flex:1;padding-bottom:4px}
+.tl-year{font-size:11px;font-weight:500;color:var(--color-text-secondary)}
+.tl-text{font-size:13px;color:var(--color-text-primary);line-height:1.5}
+.badge{display:inline-block;padding:2px 7px;border-radius:999px;font-size:11px;font-weight:500;margin-left:4px}
+.vec-demo{display:flex;flex-direction:column;gap:4px}
+.vec-row{display:flex;align-items:center;gap:6px}
+.vec-word{font-size:12px;font-weight:500;color:var(--color-text-primary);width:50px;text-align:right}
+.vec-bar-wrap{display:flex;gap:2px;flex:1}
+.vec-bar{height:14px;border-radius:2px}
+.attn-demo{font-size:12px}
+.attn-row{display:flex;gap:4px;align-items:center;margin:3px 0}
+.attn-src{font-weight:500;color:var(--color-text-primary);width:50px;font-size:12px}
+.attn-cells{display:flex;gap:3px}
+.attn-cell{width:48px;height:20px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:500}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">LLM 1단계 개념 지도 — 8개 핵심 개념 상세 설명 및 교육 현장 활용법</h2>
+
+<div class="top-nav" id="topnav">
+  <button class="nav-chip on" onclick="go(0)">전체 개요</button>
+  <button class="nav-chip" onclick="go(1)">① 언어 모델</button>
+  <button class="nav-chip" onclick="go(2)">② 토큰화</button>
+  <button class="nav-chip" onclick="go(3)">③ 임베딩</button>
+  <button class="nav-chip" onclick="go(4)">④ Attention</button>
+  <button class="nav-chip" onclick="go(5)">⑤ Transformer</button>
+  <button class="nav-chip" onclick="go(6)">⑥ 사전훈련</button>
+  <button class="nav-chip" onclick="go(7)">⑦ RLHF</button>
+  <button class="nav-chip" onclick="go(8)">⑧ 스케일링</button>
+</div>
+
+<div id="main"></div>
+</div>
+
+<script>
+const topics = [
+  null,
+  {
+    icon:"📜", color:"#EEEDFE", iconColor:"#534AB7",
+    title:"언어 모델(Language Model)이란?",
+    sub:"통계 LM → 신경망 LM의 역사 흐름",
+    concept:"언어 모델은 '다음에 올 단어를 예측하는 확률 기계'입니다. '나는 학교에 ___'라는 문장에서 빈칸에 '갔다'가 올 확률이 '먹었다'보다 높다고 계산하는 것이 핵심입니다.",
+    analogy:"📻 비유: 예전 라디오 DJ가 청취자 패턴을 학습해서 '이 시간대엔 발라드를 틀어야 반응이 좋다'고 예측하는 것과 같습니다. 초기 LM = DJ의 경험칙, 현대 LLM = 수십억 곡을 들은 AI DJ.",
+    timeline:[
+      {y:"1948", txt:"N-gram 모델 — 앞 N개 단어만 보고 예측", c:"#B4B2A9"},
+      {y:"2003", txt:"신경망 LM 등장 (Bengio et al.) — 임베딩 개념 도입", c:"#AFA9EC"},
+      {y:"2013", txt:"Word2Vec — 단어를 벡터로 표현하는 혁신", c:"#5DCAA5"},
+      {y:"2017", txt:"Transformer 'Attention Is All You Need'", c:"#534AB7"},
+      {y:"2020+", txt:"GPT-3 · ChatGPT · LLaMA · EXAONE 시대", c:"#3C3489"}
+    ],
+    classroom:[
+      "수업 오프닝: '스마트폰 키보드의 자동완성이 어떻게 다음 단어를 예측할까?' 질문으로 시작",
+      "언플러그드: 학생들이 서로 카드를 뽑아 문장 완성 게임 → 통계 LM 직관 체험",
+      "엔트리 AI블록의 '텍스트 분류'를 먼저 체험한 뒤 '이게 LLM의 조상'이라고 연결"
+    ],
+    tags:["입문","역사","개념","언플러그드 가능"]
+  },
+  {
+    icon:"✂️", color:"#E1F5EE", iconColor:"#0F6E56",
+    title:"토큰화(Tokenization)",
+    sub:"BPE · WordPiece 원리 + 실습",
+    concept:"LLM은 문자를 그대로 처리하지 않습니다. 텍스트를 '토큰'이라는 조각으로 잘라냅니다. '안녕하세요'는 [안녕, 하, 세, 요] 또는 [안녕하세요] 등으로 분리됩니다. 어떻게 자르느냐가 모델 성능에 직결됩니다.",
+    visType:"token",
+    tokens:[
+      {word:"안녕하세요",toks:["안녕","하","세","요"],c:"#9FE1CB",tc:"#085041"},
+      {word:"Transformer",toks:["Trans","former"],c:"#B5D4F4",tc:"#0C447C"},
+      {word:"인공지능교육",toks:["인공","지능","교육"],c:"#CECBF6",tc:"#26215C"}
+    ],
+    analogy:"🧩 비유: 영어 사전에서 'unbelievable'을 찾을 때 'un-believe-able'로 쪼개서 이해하는 것과 같습니다. BPE는 '자주 붙어 나오는 조각을 하나로 합친다'는 단순한 원리입니다.",
+    classroom:[
+      "실습: platform.openai.com/tokenizer 에 한국어 입력 → 한국어는 영어보다 토큰 수가 많다는 것 직접 확인",
+      "토론: '같은 문장이 언어마다 토큰 수가 다르면 어떤 문제가 생길까?' → 비용·공정성 윤리 연결",
+      "고등반: Python tiktoken 라이브러리로 직접 토큰 분리 코드 실행"
+    ],
+    tags:["실습 가능","윤리 연결","Python 코드 있음"]
+  },
+  {
+    icon:"📐", color:"#E6F1FB", iconColor:"#185FA5",
+    title:"임베딩(Embedding)",
+    sub:"단어→벡터, 의미 공간 직관",
+    concept:"토큰을 숫자 배열(벡터)로 변환합니다. 핵심은 '의미가 비슷한 단어는 벡터 공간에서 가깝다'입니다. '왕 - 남자 + 여자 = 여왕'이라는 유명한 등식이 임베딩의 마법입니다.",
+    visType:"vec",
+    concept2:"GPT-4의 토큰 임베딩 차원: 12,288차원. 우리가 3D 공간은 상상할 수 있어도 1만 2천 차원은 상상할 수 없지만, 수학적으로는 완벽하게 작동합니다.",
+    analogy:"🌍 비유: 세계지도에서 서울과 도쿄는 가깝고, 서울과 파리는 멉니다. 임베딩은 '단어들의 의미 지도'입니다. 의미가 가까우면 지도에서도 가깝게 찍힙니다.",
+    classroom:[
+      "시각화 도구: projector.tensorflow.org → 3D 임베딩 공간에서 단어 군집 직접 탐험",
+      "활동: '사과·배·포도 / 서울·부산·인천 / 기쁨·슬픔·화남' 단어들을 의미에 따라 종이에 배치 → 임베딩 직관 체득",
+      "성인반 활용: 직업 분류 챗봇에 임베딩이 왜 필요한지 실제 RAG 시연으로 연결"
+    ],
+    tags:["시각화 도구","언플러그드 가능","RAG 연결"]
+  },
+  {
+    icon:"🔭", color:"#FAEEDA", iconColor:"#BA7517",
+    title:"Attention 메커니즘",
+    sub:"Q·K·V 행렬, 왜 작동하는가",
+    concept:"'나는 오늘 학교에서 친구를 만났다. 그것이 정말 좋았다.' — '그것'이 무엇인지 알려면 앞 문장 전체를 봐야 합니다. Attention은 모든 단어가 서로 얼마나 '주목해야 하는지' 가중치를 계산합니다.",
+    visType:"attn",
+    analogy:"🎶 비유: 합창단 지휘자가 '이 소절에서는 첼로 80%, 바이올린 15%, 오보에 5%'라고 각 악기의 음량을 조절하는 것과 같습니다. Attention은 각 단어가 얼마나 '소리를 높여야 하는지' 결정합니다.",
+    classroom:[
+      "언플러그드: 학생 8명이 각자 단어 카드를 들고, 지시어('그것', '이것')가 어느 카드를 가리키는지 손가락으로 연결 → Attention 가중치 시각화",
+      "BertViz 도구(bertviz.github.io)로 실제 Attention 패턴 시각화 — 색깔로 한눈에 파악",
+      "핵심 질문: 'RNN은 앞 단어를 기억하기 어렵다. Attention은 왜 더 나은가?' → 고등반 심화 토론"
+    ],
+    tags:["핵심 개념","언플러그드","시각화 도구"]
+  },
+  {
+    icon:"🏗️", color:"#FAECE7", iconColor:"#993C1D",
+    title:"Transformer 아키텍처",
+    sub:"Encoder · Decoder · 셀프어텐션",
+    concept:"Attention을 여러 겹 쌓은 것이 Transformer입니다. 2017년 Google 논문 'Attention Is All You Need'에서 등장했고, 오늘날 모든 LLM의 뼈대입니다. Encoder는 이해, Decoder는 생성을 담당합니다.",
+    flow:[
+      {boxes:["입력 텍스트","토큰화","임베딩","위치 인코딩"],colors:["#B4B2A9","#9FE1CB","#B5D4F4","#CECBF6"]},
+      {boxes:["Multi-Head Attention","Feed Forward","Layer Norm","× N 블록"],colors:["#FAC775","#F5C4B3","#AFA9EC","#534AB7"]},
+      {boxes:["Logit 출력","Softmax","다음 토큰 샘플링"],colors:["#5DCAA5","#1D9E75","#085041"]}
+    ],
+    analogy:"🏭 비유: 삼성 반도체 공정라인처럼 각 레이어(공정)를 거칠 때마다 '정제'됩니다. 원자재(텍스트)가 들어가서 완제품(다음 단어 예측)이 나오는 공정입니다. Henry님의 전자공학 배경과 딱 맞는 비유입니다!",
+    classroom:[
+      "The Illustrated Transformer (jalammar.github.io) — 이미지만 봐도 전체 구조 이해 가능, 수업 메인 교재로 추천",
+      "블록 쌓기 비유: 레고 블록 한 개 = Attention+FFN 1층, GPT-4 = 96층 레고탑",
+      "엔트리 텍스트 분류 실습 후 '내부에 이런 구조가 돌아가고 있다'는 연결 설명"
+    ],
+    tags:["핵심 구조","시각화 자료","레고 비유"]
+  },
+  {
+    icon:"🧠", color:"#EEEDFE", iconColor:"#534AB7",
+    title:"사전훈련 vs 파인튜닝",
+    sub:"GPT · BERT 전략 차이",
+    concept:"사전훈련(Pre-training): 인터넷 전체 텍스트로 언어의 패턴을 학습. 파인튜닝(Fine-tuning): 특정 목적(번역, 요약, 챗봇)에 맞게 추가 학습. GPT는 '다음 단어 예측'으로 훈련, BERT는 '빈칸 채우기'로 훈련합니다.",
+    analogy:"🎓 비유: 사전훈련 = 대학교 4년간 일반 교양·전공 수업. 파인튜닝 = 취업 후 3개월 신입사원 교육. 대학(사전훈련) 없이 신입교육(파인튜닝)만 받으면 기초가 없습니다.",
+    classroom:[
+      "Henry님 직접 적용: 4단계에서 코딩앤플레이 학생 Q&A 데이터로 GPT-2를 파인튜닝 → '이게 바로 파인튜닝이에요'라고 학생에게 시연 가능",
+      "비교 실습: Hugging Face pipeline으로 GPT-2(사전훈련만)와 ChatGPT(RLHF까지) 같은 질문 → 답변 차이 비교",
+      "성인반: '내 업무 문서로 AI를 학습시킬 수 있다' → 파인튜닝 비즈니스 가치 토론"
+    ],
+    tags:["Henry 직접 활용","비즈니스 연결","실습 가능"]
+  },
+  {
+    icon:"🤝", color:"#E1F5EE", iconColor:"#0F6E56",
+    title:"RLHF (인간 피드백 강화학습)",
+    sub:"사람 피드백으로 AI를 정렬하는 방법",
+    concept:"ChatGPT가 '유용하고, 해롭지 않고, 정직한' 답변을 하는 이유가 RLHF입니다. 사람이 AI 답변 중 더 나은 것을 선택 → 보상 모델 학습 → PPO 강화학습으로 정책 업데이트. 세 단계의 반복입니다.",
+    flow:[
+      {boxes:["사전훈련 모델","사람이 선호 선택","보상 모델 학습","PPO 강화학습"],colors:["#AFA9EC","#9FE1CB","#FAC775","#534AB7"]}
+    ],
+    analogy:"🐕 비유: 강아지 훈련과 똑같습니다. 좋은 행동 = 간식(보상), 나쁜 행동 = 무시(패널티). RLHF는 AI에게 '좋은 답변'이 뭔지 수백만 번 간식을 줘서 학습시킵니다.",
+    classroom:[
+      "윤리 토론: '누가 좋은 답변을 결정하는가?' → 레이블러의 문화·편견이 AI에 반영되는 문제",
+      "실습: Hugging Face의 trl 라이브러리로 미니 RLHF 파이프라인 시연 (고등·성인 심화)",
+      "P-C-S-M-A 연결: AI 정렬 문제를 SDG #16(평화·정의) 프로젝트로 확장 가능"
+    ],
+    tags:["윤리 연결","SDG #16","심화 개념"]
+  },
+  {
+    icon:"📈", color:"#E6F1FB", iconColor:"#185FA5",
+    title:"스케일링 법칙(Scaling Law)",
+    sub:"파라미터 · 데이터 · 컴퓨트의 관계",
+    concept:"2020년 OpenAI의 Kaplan et al. 논문이 밝혀낸 패턴: 모델 크기(파라미터)·데이터·학습 컴퓨트를 늘리면 성능이 예측 가능하게 향상됩니다. 마치 반도체 무어의 법칙처럼, AI에도 '스케일의 법칙'이 있습니다.",
+    analogy:"🔬 비유(전자공학 배경 맞춤): 트랜지스터 수를 2배 늘리면 성능이 예측 가능하게 향상되는 무어의 법칙처럼, LLM도 파라미터를 10배 늘리면 손실이 얼마나 줄지 수식으로 예측할 수 있습니다.",
+    sizes:[
+      {name:"GPT-2", params:"117M", data:"40GB", c:"#B5D4F4"},
+      {name:"GPT-3", params:"175B", data:"570GB", c:"#85B7EB"},
+      {name:"GPT-4", params:"~1T?", data:"비공개", c:"#534AB7"},
+      {name:"EXAONE 3.5", params:"7.8B", data:"한국어 특화", c:"#9FE1CB"}
+    ],
+    classroom:[
+      "핵심 질문: '더 크면 항상 좋은가?' → Chinchilla 법칙(데이터 최적화) 토론",
+      "한국어 특화 모델(EXAONE, SOLAR, HyperCLOVA) vs 범용 모델 비교 — 한국 교육 현장에서의 선택 기준",
+      "성인반 비즈니스 연결: 클라우드 API 비용 = 파라미터 크기에 비례 → 목적에 맞는 모델 선택의 경제학"
+    ],
+    tags:["전자공학 연결","한국어 모델","비용 최적화"]
+  }
+];
+
+function go(idx) {
+  document.querySelectorAll('.nav-chip').forEach((c,i)=>c.classList.toggle('on',i===idx));
+  if(idx===0){renderOverview();return;}
+  renderTopic(idx);
+}
+
+function renderOverview() {
+  const cards = topics.slice(1).map((t,i)=>`
+    <div class="ov-card" onclick="go(${i+1})">
+      <div class="ov-icon">${t.icon}</div>
+      <div class="ov-title">${t.title.split('(')[0].trim()}</div>
+    </div>
+  `).join('');
+  const flowHtml = `
+    <div class="card full">
+      <div class="card-head"><div class="card-icon" style="background:#EEEDFE;font-size:20px">🗺️</div>
+        <div><div class="card-title">1단계 전체 흐름 — LLM의 탄생 과정</div><div class="card-sub">8개 개념이 연결되는 방식</div></div>
+      </div>
+      <div class="flow-row" style="flex-wrap:wrap;gap:4px;align-items:center">
+        <div class="flow-box" style="background:#E1F5EE;color:#085041">텍스트 입력</div><span class="arrow">→</span>
+        <div class="flow-box" style="background:#E1F5EE;color:#085041">② 토큰화</div><span class="arrow">→</span>
+        <div class="flow-box" style="background:#E6F1FB;color:#0C447C">③ 임베딩</div><span class="arrow">→</span>
+        <div class="flow-box" style="background:#FAEEDA;color:#633806">④ Attention</div><span class="arrow">→</span>
+        <div class="flow-box" style="background:#FAECE7;color:#4A1B0C">⑤ Transformer ×N</div><span class="arrow">→</span>
+        <div class="flow-box" style="background:#EEEDFE;color:#26215C">⑥ 사전훈련 완료</div><span class="arrow">→</span>
+        <div class="flow-box" style="background:#E1F5EE;color:#085041">⑦ RLHF 정렬</div><span class="arrow">→</span>
+        <div class="flow-box" style="background:#E6F1FB;color:#0C447C">ChatGPT 탄생</div>
+      </div>
+      <div class="analogy-box">💡 Henry님 교육 현장 활용 핵심: 이 8개 개념을 각각 1개 언플러그드 활동으로 연결하면 수학 없이도 2시간 LLM 워크숍이 완성됩니다. 학생들이 '손으로 만져본' 개념은 잊지 않습니다.</div>
+    </div>
+  `;
+  document.getElementById('main').innerHTML = `<div class="overview-grid">${cards}</div><div class="content-area">${flowHtml}</div>`;
+}
+
+function renderTopic(idx) {
+  const t = topics[idx];
+  let visHtml = '';
+  if(t.visType==='token') {
+    visHtml = `<div class="section-label" style="margin-top:4px">토큰화 예시</div>`+
+      t.tokens.map(tk=>`
+        <div class="vis-row">
+          <span class="token" style="background:#F1EFE8;color:#2C2C2A">${tk.word}</span>
+          <span class="arrow">→</span>
+          ${tk.toks.map(w=>`<span class="token" style="background:${tk.c};color:${tk.tc}">${w}</span>`).join('')}
+        </div>
+      `).join('');
+  } else if(t.visType==='attn') {
+    const words = ['고양이','가','생선을','먹었','다'];
+    const weights = [
+      [0.1,0.05,0.7,0.1,0.05],
+      [0.2,0.1,0.1,0.5,0.1],
+      [0.05,0.05,0.3,0.5,0.1]
+    ];
+    const greens = ['#E1F5EE','#9FE1CB','#5DCAA5','#1D9E75','#0F6E56'];
+    visHtml = `<div class="section-label" style="margin-top:4px">Attention 가중치 예시 (어두울수록 더 주목)</div>
+      <div class="attn-demo">
+        <div class="attn-row"><span class="attn-src"></span><div class="attn-cells">${words.map(w=>`<div class="attn-cell" style="background:transparent;font-size:11px;color:var(--color-text-secondary)">${w}</div>`).join('')}</div></div>
+        ${weights.map((row,ri)=>`
+          <div class="attn-row">
+            <span class="attn-src">${['먹었','생선을','고양이'][ri]}</span>
+            <div class="attn-cells">${row.map(v=>`<div class="attn-cell" style="background:${greens[Math.min(4,Math.floor(v*6))]}; color:#085041">${Math.round(v*100)}%</div>`).join('')}</div>
+          </div>
+        `).join('')}
+      </div>`;
+  }
+  if(t.sizes) {
+    visHtml = `<div class="section-label" style="margin-top:4px">모델 크기 비교</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        ${t.sizes.map(s=>`
+          <div style="padding:8px 10px;border-radius:var(--border-radius-md);background:${s.c};display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:12px;font-weight:500;color:var(--color-text-primary)">${s.name}</span>
+            <span style="font-size:11px;color:var(--color-text-secondary)">${s.params}</span>
+          </div>`).join('')}
+      </div>`;
+  }
+  if(t.timeline) {
+    visHtml = `<div class="section-label" style="margin-top:4px">역사 타임라인</div>
+      <div class="timeline">
+        ${t.timeline.map((row,i)=>`
+          <div class="tl-row">
+            <div class="tl-dot-wrap">
+              <div class="tl-dot" style="background:${row.c}"></div>
+              ${i<t.timeline.length-1?`<div class="tl-line"></div>`:''}
+            </div>
+            <div class="tl-content"><span class="tl-year">${row.y}</span><div class="tl-text">${row.txt}</div></div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  const flowSec = (t.flow||[]).map(f=>`
+    <div class="flow-row" style="margin:4px 0">
+      ${f.boxes.map((b,bi)=>`
+        <div class="flow-box" style="background:${f.colors[bi]};color:${darken(f.colors[bi])}">${b}</div>
+        ${bi<f.boxes.length-1?`<span class="arrow">→</span>`:''}
+      `).join('')}
+    </div>`).join('');
+
+  const html = `
+    <div class="content-area">
+      <div class="card" style="${idx<=4?'grid-column:1/-1':''}">
+        <div class="card-head">
+          <div class="card-icon" style="background:${t.color}">${t.icon}</div>
+          <div><div class="card-title">${t.title}</div><div class="card-sub">${t.sub}</div></div>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label">핵심 개념</div>
+        <div class="body-text">${t.concept}</div>
+        ${t.concept2?`<div class="body-text" style="margin-top:4px">${t.concept2}</div>`:''}
+        ${visHtml}
+        ${flowSec}
+      </div>
+      <div class="card">
+        <div class="section-label">직관적 비유</div>
+        <div class="analogy-box">${t.analogy}</div>
+        <div class="section-label" style="margin-top:6px">🏫 교육 현장 활용 (코딩앤플레이)</div>
+        ${t.classroom.map(c=>`<div class="tip-row"><div class="tip-dot"></div><div class="tip-text">${c}</div></div>`).join('')}
+        <div class="tag-row" style="margin-top:6px">
+          ${t.tags.map(tag=>`<span class="tag" style="background:var(--color-background-secondary);border-color:var(--color-border-tertiary);color:var(--color-text-secondary)">${tag}</span>`).join('')}
+        </div>
+        <button class="ask-btn" onclick="sendPrompt('${t.title} 개념을 코딩앤플레이 학생들에게 가르치는 언플러그드 활동이나 수업 설계를 자세하게 만들어줘')">
+          <i class="ti ti-arrow-right" aria-hidden="true"></i> 이 개념 수업 설계 만들어줘 ↗
+        </button>
+      </div>
+    </div>`;
+  document.getElementById('main').innerHTML = html;
+}
+
+function darken(hex) {
+  const map={'#B4B2A9':'#2C2C2A','#AFA9EC':'#26215C','#5DCAA5':'#04342C','#534AB7':'#fff','#3C3489':'#fff','#9FE1CB':'#04342C','#B5D4F4':'#042C53','#CECBF6':'#26215C','#FAC775':'#412402','#F5C4B3':'#4A1B0C','#85B7EB':'#042C53','#1D9E75':'#fff','#085041':'#fff','#E1F5EE':'#085041','#E6F1FB':'#0C447C','#FAEEDA':'#633806','#FAECE7':'#4A1B0C','#EEEDFE':'#26215C','#F1EFE8':'#2C2C2A'};
+  return map[hex]||'#1a1a1a';
+}
+
+renderOverview();
+</script>
