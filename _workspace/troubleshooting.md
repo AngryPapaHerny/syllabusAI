@@ -31,10 +31,12 @@
 - **원인**: Preview 서버 환경이 불안정, 사용자 거부
 - **해결**: Chrome 브라우저 직접 사용 (`mcp__Claude_in_Chrome__*` 도구)
 
-### 6. git 명령어 실패
-- **증상**: `Not a git repository`
-- **원인**: OneDrive 폴더에 git init되지 않음
-- **해결**: git 관련 명령 시도하지 않음. diff 확인 불가.
+### 6. git 명령어 실패 → ✅ 정정 (git 정상 동작, 2026-06-19)
+- **증상(과거)**: `Not a git repository`
+- **원인**: 단순히 git init이 안 됐던 것뿐. OneDrive라서 git이 안 되는 게 아니었음.
+- **현재**: `git init -b main` → commit → `git push`(GitHub https, Git Credential Manager) **모두 정상**.
+  원격: https://github.com/AngryPapaHerny/syllabusAI.git (main). diff/commit/push 사용 가능.
+- 주의: `.env.local`(실제 키)은 .gitignore로 제외됨. `.claude/settings.json`(로컬 권한 allowlist)도 제외. pnpm 심볼릭 링크 이슈와는 무관 — git은 영향 없음.
 
 ### 7. Tailwind CSS 미적용 (postcss.config.js → .mjs)
 - **증상**: 페이지가 완전히 스타일 없이 렌더링됨 (흰 배경, 기본 HTML)
